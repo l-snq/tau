@@ -1,0 +1,26 @@
+## What to do
+There are a couple ideas I have. I really don't
+know what i'm doing at all in this regard, i've
+never written software for linux and this is my
+first really "big" rust project. That being said, I
+think i have an entry point: XDG. Specifically, autostart & .desktop files.
+
+From my understanding, .desktop files are files
+that contain information of your app, such as
+icons, name and description. According to the xdg
+specification:
+
+`https://wiki.freedesktop.org/www/Specifications/`
+
+but then there's another specification, called
+`desktop basedir` which would be used to query
+through all the .desktop files you have, maybe?
+
+There's a repo called rust-xdg which provides
+desktop basedir support, maybe I could fork it and
+make it compatible with getting .desktop files
+following the freedesktop specs?
+
+
+## Regarding customization, I really don't know how I should approach the problem.
+
