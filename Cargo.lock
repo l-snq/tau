@@ -1184,6 +1184,8 @@ checksum = "df8e77cb757a61f51b947ec4a7e3646efd825b73561db1c232a8ccb639e611a0"
 name = "tau"
 version = "0.1.0"
 dependencies = [
+ "gio",
+ "glib",
  "gtk",
  "winit",
  "xdg",
