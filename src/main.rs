@@ -2,33 +2,26 @@ use std::fs::File;
 use std::io::{Error, Write};
 use xdg;
 use gtk::prelude::*;
+use gtk::{glib, Application, ApplicationWindow};
 
-fn build_gui(application: &gtk::Application) {
-    let window = gtk::ApplicationWindow::new(application);
+fn build_gui(app: &Application) {
+    let window = ApplicationWindow::builder()
+        .application(app)
+        .title("tau")
+        .build();
 
-    window.set_title("Tau");
-    window.set_border_width(10);
-    window.set_position(gtk::WindowPosition::Center);
-    window.set_default_size(350, 70);
-
-    let button = gtk::Button::with_label("click this damn button");
-    window.add(&button);
-
-    window.show_all();
-
+    window.present();
 }
 
-fn main() {
-    // TODO! shit
+const APP_ID: &str = "org.tau.Main";
 
-    let application =
-        gtk::Application::new(Some("com.github.gtk-rs.examples.basic"), 
-        Default::default());
+fn main() -> glib::ExitCode {
+    // TODO! 
 
-    application.connect_activate(build_gui);
+    let app = Application::builder()
+        .application_id(APP_ID)
+        .build();
 
-    application.run();
-
-    println!("yo this is tau");
-
+    app.connect_activate(build_gui);
+    app.run()
 }
