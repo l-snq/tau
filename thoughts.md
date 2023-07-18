@@ -24,6 +24,8 @@ following the freedesktop specs?
 the other aspect of this project is maybe using gtk-layer-shell? The reason why, is because rust's winit crate isn't the best for its wayland support. 
 Maybe using gtk I can access .desktop files?
 
+instead, i think i could use gio which is a library used in turn with gtk to query desktop files
+
 
 ## Regarding customization, I really don't know how I should approach the problem.
 
