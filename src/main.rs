@@ -6,16 +6,6 @@ use gtk::{glib, Application, ApplicationWindow, Box, Button, ListBox, SearchEntr
 
 pub mod run;
 
-fn build_gui(app: &Application) {
-
-    let window = ApplicationWindow::new(app);
-    let button = Button::with_label("hey whats up");
-
-    window.add(&button);
-
-    window.show_all();
-}
-
 const APP_ID: &str = "org.tau.Main";
 
 fn main() -> glib::ExitCode {
