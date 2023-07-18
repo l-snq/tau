@@ -25,8 +25,8 @@ fn main() -> glib::ExitCode {
         .application_id(APP_ID)
         .build();
 
-    run::RunRs();    
+    run::run_rs();    
 
-    app.connect_activate(build_gui);
+    app.connect_activate(run::draw_ui);
     app.run()
 }
