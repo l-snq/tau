@@ -2,15 +2,17 @@ use std::fs::File;
 use std::io::{Error, Write};
 use xdg;
 use gtk::prelude::*;
-use gtk::{glib, Application, ApplicationWindow};
+use gtk::{glib, Application, ApplicationWindow, Box, Button, ListBox, SearchEntry };
 
 fn build_gui(app: &Application) {
-    let window = ApplicationWindow::builder()
-        .application(app)
-        .title("tau")
-        .build();
+    // let list = ListBox::new();
 
-    window.present();
+    let window = ApplicationWindow::new(app);
+    let button = Button::with_label("hey whats up");
+
+    window.add(&button);
+
+    window.show_all();
 }
 
 const APP_ID: &str = "org.tau.Main";
