@@ -1,14 +1,24 @@
 use gtk::prelude::*;
 use gtk::{cairo, gdk};
-use gtk::{Application, ApplicationWindow, SearchEntry, SearchBar, Button, Fixed};
+use gtk::{Application, ApplicationWindow, SearchEntry};
 
 pub fn draw_ui(app: &Application) {
+
+    let hbox = gtk::ListBox::new();
     let data: Vec<u8>;
     let draw_window = ApplicationWindow::new(app);
     let search_thingy = SearchEntry::new();
     search_thingy.set_margin(400);
-    
-    draw_window.add(&search_thingy);
+    let list_something = gtk::ListBoxRow::new();
+
+    hbox.add(&search_thingy);
+    // i have to use a list box otherwise 
+    // it won't let me render multiple widgets
+    hbox.add(&list_something);
+
+    //draw_window.add(&search_thingy);
+    draw_window.add(&hbox);
+
     draw_window.show_all();
 }
 

@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{Error, Write};
 use xdg;
 use gtk::prelude::*;
-use gtk::{glib, Application, ApplicationWindow, Box, Button, ListBox, SearchEntry };
+use gtk::{glib, Application};
 
 pub mod run;
 pub mod input;
