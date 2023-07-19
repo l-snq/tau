@@ -5,6 +5,7 @@ use gtk::prelude::*;
 use gtk::{glib, Application, ApplicationWindow, Box, Button, ListBox, SearchEntry };
 
 pub mod run;
+pub mod input;
 
 const APP_ID: &str = "org.tau.Main";
 
