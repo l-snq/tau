@@ -26,6 +26,10 @@ Maybe using gtk I can access .desktop files?
 
 instead, i think i could use gio which is a library used in turn with gtk to query desktop files
 
+So i want to be able to provide a list of the appInfo stuff. Go into run.rs, and figure out how to render a label as an individual UI element. Then do a forloop to render each of those items for the label.
+
+Also, at some point, i really need to transfer from gtk3 to gtk4.
+
 
 ## Regarding customization, I really don't know how I should approach the problem.
 
