@@ -30,6 +30,11 @@ So i want to be able to provide a list of the appInfo stuff. Go into run.rs, and
 
 Also, at some point, i really need to transfer from gtk3 to gtk4.
 
+so, i added in a label that would iterate through your
+apps and display those apps to a label within a list
+box. nice. next i want to do proper styling by adding
+it into a table.
+
 
 ## Regarding customization, I really don't know how I should approach the problem.
 
