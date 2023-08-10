@@ -35,8 +35,9 @@ apps and display those apps to a label within a list
 box. nice. next i want to do proper styling by adding
 it into a table.
 
-I should look into how interators work in rust so I can apply specific functions to values returned from Gio. ( App info and shit like that)
-
+## Suggestions: 
+1. Use gtk's menu, and menu items. Ex: 
+https://github.com/gtk-rs/gtk3-rs/blob/master/examples/menu_bar/
 
 ## Regarding customization, I really don't know how I should approach the problem.
 

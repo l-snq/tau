@@ -1,44 +1,40 @@
 use gtk::prelude::*;
-use gtk::{cairo, gdk};
-use gtk::{Application, ApplicationWindow, SearchEntry};
+use gtk::{Application, ApplicationWindow, SearchBar };
+
+use crate::input::{self, compare_inputs};
 
 pub fn draw_ui(app: &Application) {
 
     let apps = gio::AppInfo::all();
-    let mut item_to_string: String;
 
     let hbox = gtk::ListBox::new();
+
     let draw_window = ApplicationWindow::new(app);
-    let search_thingy = SearchEntry::new();
-    search_thingy.set_margin(400);
-    let text = gtk::Label::new(None); // TODO! This needs to be figured out. Myabe not use a label
+
+    let search_bar = SearchBar::new();  //TODO! Need to add input box. Styling is broken.
+    search_bar.set_margin(10);
+
+    // handle search event. Searchbar.handle_event(); takes 1 arg
+
+    let text = gtk::Label::new(None); // TODO! This needs to be figured out. Maybe not use a label
     // at all.
+    
+    for app in apps {
+       let name = app.display_name();
+       let title = gtk::Label::new(Some(&name));
 
-    let text_view = gtk::TextView::new();
-    // text_view.set_wrap_mode(gtk::WrapMode::Word);
-    // text_view.set_cursor_visible(false); is this even necessary ?
-
-    fn get_application_info() {
-        let apps = gio::AppInfo::all();
-
-        for app in apps {
-            app.display_name().map(|i| i.to_string());
-            println!("*******This is my app description {:?}", app.description());
-        }
+       hbox.add(&title);    
     }
 
-    // i have to use a list box otherwise 
-    // it won't let me render multiple widgets
-    // hbox.add(&search_thingy);
-
-    get_application_info();
-    hbox.add(&text_view);
+    hbox.add(&text);
+    hbox.add(&search_bar); 
 
     draw_window.add(&hbox);
+    draw_window.set_size_request(300, 300);
+    draw_window.set_keep_above(true);
     draw_window.show_all();
 }
 
 pub fn run_rs() {
-    // get gio shit here 
     let _applications = gio::AppInfo::all();
 }
