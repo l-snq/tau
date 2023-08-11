@@ -1,5 +1,5 @@
 use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, SearchBar };
+use gtk::{Application, ApplicationWindow, SearchBar, Image };
 
 use crate::input::{self, compare_inputs};
 
@@ -20,9 +20,17 @@ pub fn draw_ui(app: &Application) {
     // at all.
     
     for app in apps {
+       let icon_with_name = gtk::ListBoxRow::new();
        let name = app.display_name();
+       let icon = app.icon(); // TODO!
+       let image_container = Image::from_icon_name(Some(&name), gtk::IconSize::SmallToolbar);
        let title = gtk::Label::new(Some(&name));
 
+       icon_with_name.add(&image_container);
+       icon_with_name.add(&title);
+
+       
+       hbox.add(&icon_with_name);
        hbox.add(&title);    
     }
 
