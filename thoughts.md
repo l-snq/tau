@@ -33,7 +33,7 @@ Also, at some point, i really need to transfer from gtk3 to gtk4.
 so, i added in a label that would iterate through your
 apps and display those apps to a label within a list
 box. nice. next i want to do proper styling by adding
-it into a table.
+it into a table. OR I can just use labels. Time to try and implement icons now though
 
 ## Suggestions: 
 1. Use gtk's menu, and menu items. Ex: 
