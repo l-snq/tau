@@ -39,6 +39,7 @@ pub fn draw_ui(app: &Application) {
 
     hbox.add(&text);
     hbox.add(&search_bar); 
+
     scrolled_window.add(&hbox);
 
     draw_window.add(&scrolled_window);
