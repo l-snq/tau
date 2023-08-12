@@ -5,8 +5,7 @@ use crate::input::{self, compare_inputs};
 
 pub fn draw_ui(app: &Application) {
 
-    let apps = gio::AppInfo::all();
-
+    let apps = gio::AppInfo::all(); 
     let hbox = gtk::ListBox::new();
 
     let draw_window = ApplicationWindow::new(app);
@@ -25,7 +24,7 @@ pub fn draw_ui(app: &Application) {
 
        let icon = app.icon(); // TODO! Fetching the actual icon from gio is out of the scope of
         // gio. You need to use something else.
-       let image_container = Image::from_icon_name(Some(&name), gtk::IconSize::SmallToolbar);
+       let image_container = Image::from_icon_name(Some(&name), gtk::IconSize::Menu);
 
        let title = gtk::Label::new(Some(&name));
 
@@ -41,8 +40,4 @@ pub fn draw_ui(app: &Application) {
     draw_window.set_size_request(300, 300);
     draw_window.set_keep_above(true);
     draw_window.show_all();
-}
-
-pub fn run_rs() {
-    let _applications = gio::AppInfo::all();
 }
