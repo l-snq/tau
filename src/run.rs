@@ -20,18 +20,18 @@ pub fn draw_ui(app: &Application) {
     // at all.
     
     for app in apps {
-       let icon_with_name = gtk::ListBoxRow::new();
+       let icon_with_name = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let name = app.display_name();
-       let icon = app.icon(); // TODO!
+
+       let icon = app.icon(); // TODO! Fetching the actual icon from gio is out of the scope of
+        // gio. You need to use something else.
        let image_container = Image::from_icon_name(Some(&name), gtk::IconSize::SmallToolbar);
+
        let title = gtk::Label::new(Some(&name));
 
-       icon_with_name.add(&image_container);
-       icon_with_name.add(&title);
-
-       
+       icon_with_name.pack_start(&title, false, false, 0);
+       icon_with_name.pack_end(&image_container, false, true, 0);
        hbox.add(&icon_with_name);
-       hbox.add(&title);    
     }
 
     hbox.add(&text);
