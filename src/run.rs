@@ -42,7 +42,7 @@ pub fn draw_ui(app: &Application) {
     scrolled_window.add(&hbox);
 
     draw_window.add(&scrolled_window);
-    draw_window.set_size_request(300, 300);
+    draw_window.set_size_request(100, 400);
     draw_window.set_keep_above(true);
     draw_window.show_all();
 }
