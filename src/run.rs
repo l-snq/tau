@@ -10,6 +10,10 @@ pub fn draw_ui(app: &Application) {
 
     let draw_window = ApplicationWindow::new(app);
 
+    let scrolled_window = gtk::ScrolledWindow::builder()
+        .name("scrollable window")
+        .hscrollbar_policy(gtk::PolicyType::Never)
+        .build();
     let search_bar = SearchBar::new();  //TODO! Need to add input box. Styling is broken.
     search_bar.set_margin(10);
 
@@ -35,8 +39,9 @@ pub fn draw_ui(app: &Application) {
 
     hbox.add(&text);
     hbox.add(&search_bar); 
+    scrolled_window.add(&hbox);
 
-    draw_window.add(&hbox);
+    draw_window.add(&scrolled_window);
     draw_window.set_size_request(300, 300);
     draw_window.set_keep_above(true);
     draw_window.show_all();
