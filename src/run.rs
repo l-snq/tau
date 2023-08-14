@@ -1,5 +1,5 @@
-use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, SearchBar, Image };
+use gtk::{prelude::*, IconLookupFlags};
+use gtk::{Application, ApplicationWindow, SearchBar, Image, IconTheme };
 
 use crate::input::{self, compare_inputs};
 
@@ -22,11 +22,12 @@ pub fn draw_ui(app: &Application) {
     let text = gtk::Label::new(None);     
 
     for app in apps {
+       let icon_theme = IconTheme::default().unwrap();
        let icon_with_name = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let name = app.display_name();
 
        let icon = app.icon(); // TODO! Fetching the actual icon from gio is out of the scope of
-        // gio. You need to use something else.
+        // gio. You need to use something else. This isn't even being used anyways
        let image_container = Image::from_icon_name(Some(&name), gtk::IconSize::Menu);
 
        let title = gtk::Label::new(Some(&name));
