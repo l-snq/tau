@@ -19,9 +19,8 @@ pub fn draw_ui(app: &Application) {
 
     // handle search event. Searchbar.handle_event(); takes 1 arg
 
-    let text = gtk::Label::new(None); // TODO! This needs to be figured out. Maybe not use a label
-    // at all.
-    
+    let text = gtk::Label::new(None);     
+
     for app in apps {
        let icon_with_name = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let name = app.display_name();
