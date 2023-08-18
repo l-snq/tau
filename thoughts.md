@@ -30,11 +30,19 @@ So i want to be able to provide a list of the appInfo stuff. Go into run.rs, and
 
 Also, at some point, i really need to transfer from gtk3 to gtk4.
 
-so, i added in a label that would iterate through your
-apps and display those apps to a label within a list
-box. nice. next i want to do proper styling by adding
-it into a table. OR I can just use labels. Time to try and implement icons now though
+Let's do some pseudo code to verbalize everything here.
+So I want to get the Exec aspect of every desktop file. For every app in Gio::AppInfo, I want to load those exec shortcuts
+`
+let name = gio::AppInfo
 
+for app in apps {
+  Command::new(&name) 
+  .args()
+  .output();
+}
+`
+
+in Command::new(), which is a way to take commands and actually output them into terminal, i would want to grab the exec for each app. How do I do that? Maybe with gio::DesktopAppInfo ?
 ## Suggestions: 
 1. Use gtk's menu, and menu items. Ex: 
 https://github.com/gtk-rs/gtk3-rs/blob/master/examples/menu_bar/

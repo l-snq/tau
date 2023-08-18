@@ -2,6 +2,31 @@ use gtk::{prelude::*, IconLookupFlags};
 use gtk::{Application, ApplicationWindow, SearchBar, Image, IconTheme };
 
 use crate::input::{self, compare_inputs};
+use gio::AppInfo;
+
+pub fn load_app(app: &AppInfo) {
+    // TODO
+    // Maybe parse the commands into terminal and run them from there. There must be a crate for
+    // that
+
+    use std::process::Command;
+
+    app.id();
+
+    let output = if cfg!(target_os = "windows") {
+        Command::new("cmd")
+       .args(["/C", "hello world"]) 
+            .output()
+            .expect("erm thats awkward")
+    } else {
+        Command::new("gtk-demo")
+           //.arg("./target/release") 
+           .output()
+           .expect("Something went wrong with your command")
+    };
+
+    let hello = output.stdout;
+}
 
 pub fn draw_ui(app: &Application) {
 
@@ -22,7 +47,7 @@ pub fn draw_ui(app: &Application) {
     let text = gtk::Label::new(None);     
 
     for app in apps {
-       let icon_theme = IconTheme::default().unwrap();
+       let icon_theme = IconTheme::default().unwrap(); // TODO! still
        let icon_with_name = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let name = app.display_name();
 
@@ -32,6 +57,7 @@ pub fn draw_ui(app: &Application) {
 
        let title = gtk::Label::new(Some(&name));
 
+       load_app(&app);
        icon_with_name.pack_start(&title, false, false, 0);
        icon_with_name.pack_end(&image_container, false, true, 0);
        hbox.add(&icon_with_name);
@@ -46,4 +72,6 @@ pub fn draw_ui(app: &Application) {
     draw_window.set_size_request(100, 400);
     draw_window.set_keep_above(true);
     draw_window.show_all();
+
 }
+
