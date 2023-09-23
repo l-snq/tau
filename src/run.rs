@@ -1,3 +1,5 @@
+// use gtk_layer_shell::prelude::*;
+
 use gtk::{prelude::*, IconLookupFlags};
 use gtk::{Application, ApplicationWindow, SearchBar, Image, IconTheme };
 
@@ -5,15 +7,21 @@ use crate::input::{self, compare_inputs};
 
 pub fn draw_ui(app: &Application) {
 
-    let apps = gio::AppInfo::all(); 
+    let apps = gtk::gio::AppInfo::all(); 
     let hbox = gtk::ListBox::new();
 
     let draw_window = ApplicationWindow::new(app);
+
+
+    // set up layer shell
+    gtk_layer_shell::LayerShell::init_layer_shell(&draw_window);
+    gtk_layer_shell::LayerShell::set_layer(&draw_window, gtk_layer_shell::Layer::Overlay);
 
     let scrolled_window = gtk::ScrolledWindow::builder()
         .name("scrollable window")
         .hscrollbar_policy(gtk::PolicyType::Never)
         .build();
+
     let search_bar = SearchBar::new();  //TODO! Need to add input box. Styling is broken.
     search_bar.set_margin(10);
 

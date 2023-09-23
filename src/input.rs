@@ -1,4 +1,4 @@
-use gio::AppInfo;
+use gtk::gio::AppInfo;
 use gtk::{Application, ApplicationWindow, SearchBar};
 
 pub fn compare_inputs(label: &str, input: &str) {
