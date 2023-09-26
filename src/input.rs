@@ -1,3 +1,4 @@
+use gtk4 as gtk;
 use gtk::gio::AppInfo;
 use gtk::{Application, ApplicationWindow, SearchBar};
 
