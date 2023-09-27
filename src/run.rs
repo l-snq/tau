@@ -26,7 +26,7 @@ pub fn draw_ui(app: &Application) {
 
     // set up layer shell
     LayerShell::init_layer_shell(&draw_window);
-    LayerShell::set_layer(&draw_window, Layer::Overlay);
+    LayerShell::set_layer(&draw_window, Layer::Top);
 
     let scrolled_window = gtk::ScrolledWindow::builder()
         .name("scrollable window")
