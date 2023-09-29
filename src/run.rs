@@ -8,7 +8,7 @@ use gtk::{
     Image, 
     IconTheme,
     gio,
-    glib,
+    glib, builders::ImageBuilder,
 };
 use crate::input::{self, compare_inputs};
 
@@ -26,7 +26,7 @@ pub fn draw_ui(app: &Application) {
 
     // set up layer shell
     LayerShell::init_layer_shell(&draw_window);
-    LayerShell::set_layer(&draw_window, Layer::Overlay);
+    LayerShell::set_layer(&draw_window, Layer::Top);
 
     let scrolled_window = gtk::ScrolledWindow::builder()
         .name("scrollable window")
@@ -36,18 +36,23 @@ pub fn draw_ui(app: &Application) {
     let text = gtk::Label::new(None);     
 
     for app in apps {
-       let icon_theme = gtk::IconTheme::default();
-       let icon_with_name = gtk::Box::new(gtk::Orientation::Horizontal, 20);
-       let name = app.display_name();
-       let icon = app.icon(); // TODO! Fetching the actual icon from gio is out of the scope of
-        // gio. You need to use something else. This isn't even being used anyways
-       let image_container = Image::from_icon_name(&name);
+       let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+       let app_name = app.display_name().to_string();
 
-       let title = gtk::Label::new(Some(&name));
+       let image_icon_setup = Image::builder()
+            .pixel_size(50)
+            .build();
+        
+       let title = gtk::Label::new(Some(&app_name));
 
-       icon_with_name.prepend(&title);
-       icon_with_name.append(&image_container);
-       hbox.append(&icon_with_name);
+        if let Some(gtk_icon_name) = app.icon() {
+            image_icon_setup.set_from_gicon(&gtk_icon_name);
+        }
+
+       icon_box.prepend(&title);
+       icon_box.append(&image_icon_setup);
+       hbox.append(&icon_box);
+
     }
 
     hbox.append(&text);
