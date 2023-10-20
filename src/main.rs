@@ -1,9 +1,5 @@
-use std::fs::File;
-use std::io::{Error, Write};
-
 use gtk4 as gtk;
 
-use xdg;
 use gtk::prelude::*;
 use gtk::{glib, Application};
 
