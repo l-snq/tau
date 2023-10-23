@@ -7,10 +7,8 @@ use gtk::{
     Image, 
     gio
 };
-use std::collections::HashMap;
 use crate::input::input_handling;
 use crate::utils::AppField;
-use std::process::Command; // FOR FUTURE USE
 
 pub fn draw_ui(application: &Application) {
 
@@ -24,6 +22,7 @@ pub fn draw_ui(application: &Application) {
         .title("Tau")
         .build();
 
+   let hash: Vec<i32> = vec![];
    
    // set up layer shell
    LayerShell::init_layer_shell(&draw_window);
@@ -40,11 +39,8 @@ pub fn draw_ui(application: &Application) {
 
    let mut captured_app = AppField::new();
 
-   let mut hash = HashMap::new();
-
-   let mut count = 0;
-
    for app in apps {
+
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
 
        let app_name = app.display_name().to_string();
@@ -58,27 +54,24 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
-       hash.insert(app_name.clone(), count += 1); // THIS IS EXPENSIVE, Consider alternatives to
-      // using clone()
 
-       captured_app.update_fields(app_name.clone(), app_name.clone()); // Still using clone :|
+       let filled_hash: Vec<_> = hash
+            .iter()
+            .map(|x| {
+                let x = app;
+                captured_app.update_fields(app_name.clone(), app_name.clone())
+            })
+            .collect();
 
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
        hbox.append(&icon_box);
+       captured_app.update_fields(app_name.clone(), app_name.clone());
    }
 
-   let output = Command::new("gimp")
-      .output()
-      .expect("failed to execute the process");
-
-   let hello = output.stdout;
-
-   println!("Captured app struct: {:?}", captured_app);
-   println!("Hash {:?}", hash);
-
+   println!("++++++ {:?}", captured_app);
    hbox.append(&text);
-   // hbox.prepend(&search_bar); 
+    // hbox.prepend(&search_bar); 
 
    scrolled_window.set_child(Some(&hbox));
    input_handling(&application, &draw_window);

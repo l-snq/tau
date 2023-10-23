@@ -1,7 +1,7 @@
 #[derive(Debug, Clone)]
 pub struct AppField {
-    app_name: String,
-    exec: String,
+    pub app_name: String,
+    pub exec: String,
 }
 
 impl AppField {

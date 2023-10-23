@@ -43,8 +43,12 @@ pub fn draw_ui(application: &Application) {
    let mut hash = HashMap::new();
 
    let mut count = 0;
+   // let mut filled_hash: Vec<_> = hash
+   //      .iter()
+   //      .map(|i| {count += 1; (i, count)})
+   //      .collect();
 
-   for app in apps {
+    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
 
        let app_name = app.display_name().to_string();
@@ -58,24 +62,14 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
-       hash.insert(app_name.clone(), count += 1); // THIS IS EXPENSIVE, Consider alternatives to
-      // using clone()
+       hash.insert(app_name.clone(), count += 1);
 
-       captured_app.update_fields(app_name.clone(), app_name.clone()); // Still using clone :|
+       captured_app.update_fields(app_name.clone(), app_name.clone());
 
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
        hbox.append(&icon_box);
-   }
-
-   let output = Command::new("gimp")
-      .output()
-      .expect("failed to execute the process");
-
-   let hello = output.stdout;
-
-   println!("Captured app struct: {:?}", captured_app);
-   println!("Hash {:?}", hash);
+       }
 
    hbox.append(&text);
    // hbox.prepend(&search_bar); 
