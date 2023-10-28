@@ -14,9 +14,7 @@ use std::process::Command; // FOR FUTURE USE
 
 pub fn draw_ui(application: &Application) {
 
-   let apps = gio::AppInfo::all(); 
-   let hbox = gtk::ListBox::new();
-
+   
    let draw_window = ApplicationWindow::builder()
         .default_width(300)
         .default_height(300)
@@ -24,7 +22,6 @@ pub fn draw_ui(application: &Application) {
         .title("Tau")
         .build();
 
-   
    // set up layer shell
    LayerShell::init_layer_shell(&draw_window);
    LayerShell::set_layer(&draw_window, Layer::Overlay);
@@ -42,9 +39,11 @@ pub fn draw_ui(application: &Application) {
 
    let mut hash = HashMap::new();
 
-   let mut count = 0;
+   let apps = gio::AppInfo::all(); 
+   let hbox = gtk::ListBox::new();
 
    for app in apps {
+
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
 
        let app_name = app.display_name().to_string();
@@ -68,13 +67,10 @@ pub fn draw_ui(application: &Application) {
        hbox.append(&icon_box);
    }
 
-   if hbox.has_focus() {
-      let x = hash.get("gimp");
-      println!("{:?}", x);
-   }
-
    println!("Captured app struct: {:?}", captured_app);
    println!("Hash {:?}", hash);
+
+   println!("{:?}", hash.get("Lollypop"));
 
    hbox.append(&text);
    // hbox.prepend(&search_bar); 
