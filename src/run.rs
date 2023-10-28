@@ -58,8 +58,8 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
-       hash.insert(app_name.clone(), count += 1); // THIS IS EXPENSIVE, Consider alternatives to
-      // using clone()
+       hash.insert(app_name.clone(), icon_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
+       // using clone()
 
        captured_app.update_fields(app_name.clone(), app_name.clone()); // Still using clone :|
 
@@ -68,11 +68,10 @@ pub fn draw_ui(application: &Application) {
        hbox.append(&icon_box);
    }
 
-   let output = Command::new("gimp")
-      .output()
-      .expect("failed to execute the process");
-
-   let hello = output.stdout;
+   if hbox.has_focus() {
+      let x = hash.get("gimp");
+      println!("{:?}", x);
+   }
 
    println!("Captured app struct: {:?}", captured_app);
    println!("Hash {:?}", hash);
