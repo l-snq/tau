@@ -5,7 +5,9 @@ use gtk::{
     Application,
     ApplicationWindow,
     Image, 
-    gio
+    gio,
+    SearchBar,
+    SearchEntry 
 };
 use std::collections::HashMap;
 use crate::input::input_handling;
@@ -67,13 +69,38 @@ pub fn draw_ui(application: &Application) {
        hbox.append(&icon_box);
    }
 
-   println!("Captured app struct: {:?}", captured_app);
    println!("Hash {:?}", hash);
 
-   println!("{:?}", hash.get("Lollypop"));
+   let search_label = gtk::Label::builder()
+      .label("Type to search for an app")
+      .vexpand(true)
+      .halign(gtk::Align::Center)
+      .valign(gtk::Align::Center)
+      .build();
+
+   // search bar setup
+   let search_bar = SearchBar::builder()
+      .valign(gtk::Align::Start)
+      .key_capture_widget(&draw_window)
+      .css_classes(["search_box"])
+      .build();
+   let search_button = gtk::ToggleButton::new();
+   search_button.set_icon_name("system-search-symbolic");
+   let search_entry = SearchEntry::new();
+   
+   search_entry.set_hexpand(true);
+
+   search_button
+      .bind_property("active", &search_bar, "search-mode-enabled")
+      .sync_create()
+      .bidirectional()
+      .build();
+
+   search_bar.set_child(Some(&search_entry));
 
    hbox.append(&text);
-   // hbox.prepend(&search_bar); 
+   hbox.append(&search_label);
+   hbox.prepend(&search_bar); 
 
    scrolled_window.set_child(Some(&hbox));
    input_handling(&application, &draw_window);
