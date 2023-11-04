@@ -69,8 +69,6 @@ pub fn draw_ui(application: &Application) {
        hbox.append(&icon_box);
    }
 
-   println!("Hash {:?}", hash);
-
    let search_label = gtk::Label::builder()
       .label("Type to search for an app")
       .vexpand(true)
@@ -97,10 +95,11 @@ pub fn draw_ui(application: &Application) {
       .build();
 
    search_bar.set_child(Some(&search_entry));
+   let search_box = gtk::Box::new(gtk::Orientation::Horizontal, 40);
+   search_box.append(&search_bar);
 
-   hbox.append(&text);
-   hbox.append(&search_label);
-   hbox.prepend(&search_bar); 
+   //hbox.append(&text);
+   hbox.append(&search_box); 
 
    scrolled_window.set_child(Some(&hbox));
    input_handling(&application, &draw_window);
@@ -109,4 +108,3 @@ pub fn draw_ui(application: &Application) {
    draw_window.set_size_request(100, 400);
    draw_window.show();
 }
-

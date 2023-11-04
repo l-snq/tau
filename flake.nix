@@ -20,7 +20,6 @@
 
       in rec {
         packages = {
-          # replace hello-world with your package name
           tau = (rustPkgs.workspace.tau {});
           default = packages.hello-world;
         };
