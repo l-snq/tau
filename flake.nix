@@ -21,7 +21,7 @@
       in rec {
         packages = {
           tau = (rustPkgs.workspace.tau {});
-          default = packages.hello-world;
+          default = packages.tau;
         };
       }
     );
