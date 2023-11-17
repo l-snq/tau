@@ -7,7 +7,9 @@ use gtk::{
     Image, 
     gio,
     SearchBar,
-    SearchEntry 
+    SearchEntry,
+    gdk,
+    glib
 };
 use std::collections::HashMap;
 use crate::input::input_handling;
@@ -15,7 +17,6 @@ use crate::utils::AppField;
 use std::process::Command; // FOR FUTURE USE
 
 pub fn draw_ui(application: &Application) {
-
    
    let draw_window = ApplicationWindow::builder()
         .default_width(300)
@@ -30,6 +31,27 @@ pub fn draw_ui(application: &Application) {
    LayerShell::set_keyboard_mode(&draw_window, KeyboardMode::OnDemand);
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
+
+   let hbox = gtk::ListBox::new();
+
+   // THIS IS FOR THE KEY EVENTS
+   let event_controller = gtk::EventControllerKey::new();
+
+   event_controller.connect_key_pressed(|_, key, _, _| {
+      match key {
+         gdk::Key::Escape => {
+            std::process::exit(0);
+         },
+         gdk::Key::Return => {
+            println!("RETURN has been pressed");
+         },
+         _ => (),
+      }
+      glib::Propagation::Proceed
+   });
+
+   draw_window.add_controller(event_controller);
+
    let scrolled_window = gtk::ScrolledWindow::builder()
         .name("scrollable window")
         .hscrollbar_policy(gtk::PolicyType::Never)
@@ -42,7 +64,6 @@ pub fn draw_ui(application: &Application) {
    let mut hash = HashMap::new();
 
    let apps = gio::AppInfo::all(); 
-   let hbox = gtk::ListBox::new();
 
    for app in apps {
 
@@ -98,11 +119,10 @@ pub fn draw_ui(application: &Application) {
    let search_box = gtk::Box::new(gtk::Orientation::Horizontal, 40);
    search_box.append(&search_bar);
 
-   //hbox.append(&text);
    hbox.append(&search_box); 
 
    scrolled_window.set_child(Some(&hbox));
-   input_handling(&application, &draw_window);
+   //input_handling(&application, &draw_window);
 
    draw_window.set_child(Some(&scrolled_window));
    draw_window.set_size_request(100, 400);
