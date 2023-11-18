@@ -67,7 +67,6 @@ pub fn draw_ui(application: &Application) {
 
        captured_app.update_fields(app_name.clone(), app_name.clone()); // Still using clone :|
 
-       icon_box.set_focus_on_click(true);
        if icon_box.has_focus() {
          println!("this has focus");
        }
