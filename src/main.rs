@@ -6,6 +6,7 @@ use gtk::{glib, Application};
 pub mod run;
 pub mod input;
 pub mod utils;
+pub mod actions;
 
 const APP_ID: &str = "org.tau.Main";
 

@@ -12,8 +12,8 @@ use gtk::{
     glib
 };
 use std::collections::HashMap;
-use crate::input::input_handling;
 use crate::utils::AppField;
+use crate::actions::on_app_activate;
 use std::process::Command; // FOR FUTURE USE
 
 pub fn draw_ui(application: &Application) {
@@ -131,6 +131,7 @@ pub fn draw_ui(application: &Application) {
    scrolled_window.set_child(Some(&list_box));
    //input_handling(&application, &draw_window);
 
+   on_app_activate(&application);
    draw_window.set_child(Some(&scrolled_window));
    draw_window.set_size_request(100, 400);
    draw_window.show();
