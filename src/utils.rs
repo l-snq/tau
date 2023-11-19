@@ -1,3 +1,5 @@
+use gtk4::{ListBox, Box};
+use std::collections::HashMap;
 #[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
@@ -18,3 +20,6 @@ impl AppField {
     }
 }
 
+pub fn selection_process(ibox: &Box, app_hashmap: &HashMap<String, &Box>) {
+    // compare ibox name with hashmap.keys(), right?
+}

@@ -31,9 +31,9 @@ pub fn draw_ui(application: &Application) {
    LayerShell::set_keyboard_mode(&draw_window, KeyboardMode::OnDemand);
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
-   let hbox = gtk::ListBox::new();
-   if hbox.has_focus() {
-      println!("hbox has focus")
+   let list_box = gtk::ListBox::new();
+   if list_box.has_focus() {
+      println!("list_box has focus")
    };
 
    let scrolled_window = gtk::ScrolledWindow::builder()
@@ -54,6 +54,7 @@ pub fn draw_ui(application: &Application) {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        icon_box.grab_focus();
        let app_name = app.display_name().to_string();
+       icon_box.set_widget_name(&app_name);
        let image_icon_setup = Image::builder()
             .pixel_size(50)
             .build();
@@ -70,9 +71,11 @@ pub fn draw_ui(application: &Application) {
        if icon_box.has_focus() {
          println!("this has focus");
        }
+
+       println!("{:?}", icon_box.widget_name());
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
-       hbox.append(&icon_box);
+       list_box.append(&icon_box);
        
    }
 
@@ -123,9 +126,9 @@ pub fn draw_ui(application: &Application) {
    let search_box = gtk::Box::new(gtk::Orientation::Horizontal, 40);
    search_box.append(&search_bar);
 
-   hbox.append(&search_box); 
+   list_box.append(&search_box); 
 
-   scrolled_window.set_child(Some(&hbox));
+   scrolled_window.set_child(Some(&list_box));
    //input_handling(&application, &draw_window);
 
    draw_window.set_child(Some(&scrolled_window));
