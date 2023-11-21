@@ -5,9 +5,9 @@ use gtk::{
     Application,
     ApplicationWindow,
     Image, 
-    gio,
     SearchBar,
     SearchEntry,
+    gio,
     gdk,
     glib
 };
@@ -31,7 +31,8 @@ pub fn draw_ui(application: &Application) {
    LayerShell::set_keyboard_mode(&draw_window, KeyboardMode::OnDemand);
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
-   let list_box = gtk::ListBox::new();
+   let list_box = gtk::ListBox::builder().name("who up listin they box rn").build();
+   //println!("******{:?}", list_box.select_row(Some(0)));
    if list_box.has_focus() {
       println!("list_box has focus")
    };
@@ -49,16 +50,20 @@ pub fn draw_ui(application: &Application) {
 
    let apps = gio::AppInfo::all(); 
 
+   // refactor this whole fucking thing dude. This is a mess. Coordinate the hashmap with the UI
+   // properly.
    for app in apps {
 
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
-       icon_box.grab_focus();
        let app_name = app.display_name().to_string();
+       icon_box.grab_focus();
        icon_box.set_widget_name(&app_name);
        let image_icon_setup = Image::builder()
             .pixel_size(50)
             .build();
        let title = gtk::Label::new(Some(&app_name));
+
+       //let list_row = gtk::ListBoxRow::builder().name(&app_name).build();
 
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
@@ -68,11 +73,7 @@ pub fn draw_ui(application: &Application) {
 
        captured_app.update_fields(app_name.clone(), app_name.clone()); // Still using clone :|
 
-       if icon_box.has_focus() {
-         println!("this has focus");
-       }
-
-       println!("{:?}", icon_box.widget_name());
+       //println!("{:?}", icon_box.widget_name());
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
        list_box.append(&icon_box);
@@ -86,49 +87,30 @@ pub fn draw_ui(application: &Application) {
       .valign(gtk::Align::Center)
       .build();
 
+   scrolled_window.set_child(Some(&list_box));
+
    // THIS IS FOR THE KEY EVENTS
    let event_controller = gtk::EventControllerKey::new();
 
-   event_controller.connect_key_pressed(|_, key, _, _| {
-      match key {
-         gdk::Key::Escape => {
-            std::process::exit(0);
-         },
-         gdk::Key::Return => {
-            println!("RETURN has been pressed");
-         },
-         _ => (),
+   event_controller.connect_key_pressed(move |_, key, _, _| {
+      if let Some(row) = list_box.row_at_index(0) {
+         match key {
+            gdk::Key::Escape => {
+               std::process::exit(0);
+            },
+            gdk::Key::Return => {
+               println!("RETURN has been pressed");
+            },
+            gdk::Key::Shift_L if row.has_focus() => {
+               println!("this row {:?} has focus", &row)
+            },
+            _ => (),
       }
+   }
       glib::Propagation::Proceed
    });
 
    draw_window.add_controller(event_controller);
-
-   // search bar setup
-   let search_bar = SearchBar::builder()
-      .valign(gtk::Align::Start)
-      .key_capture_widget(&draw_window)
-      .css_classes(["search_box"])
-      .build();
-   let search_button = gtk::ToggleButton::new();
-   search_button.set_icon_name("system-search-symbolic");
-   let search_entry = SearchEntry::new();
-   
-   search_entry.set_hexpand(true);
-
-   search_button
-      .bind_property("active", &search_bar, "search-mode-enabled")
-      .sync_create()
-      .bidirectional()
-      .build();
-
-   search_bar.set_child(Some(&search_entry));
-   let search_box = gtk::Box::new(gtk::Orientation::Horizontal, 40);
-   search_box.append(&search_bar);
-
-   list_box.append(&search_box); 
-
-   scrolled_window.set_child(Some(&list_box));
    //input_handling(&application, &draw_window);
 
    on_app_activate(&application);
