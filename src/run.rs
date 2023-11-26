@@ -98,11 +98,9 @@ pub fn draw_ui(application: &Application) {
             gdk::Key::Escape => {
                std::process::exit(0);
             },
-            gdk::Key::Return => {
-               println!("RETURN has been pressed");
-            },
-            gdk::Key::Shift_L if row.has_focus() => {
-               println!("this row {:?} has focus", &row)
+            gdk::Key::Return if row.has_focus() => {
+               println!("this row {:?} has focus", &row);
+               // do your magic here  
             },
             _ => (),
       }
