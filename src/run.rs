@@ -93,7 +93,7 @@ pub fn draw_ui(application: &Application) {
    let event_controller = gtk::EventControllerKey::new();
 
    event_controller.connect_key_pressed(move |_, key, _, _| {
-      if let Some(row) = list_box.row_at_index(0) {
+      if let Some(row) = list_box.selected_row() {
          match key {
             gdk::Key::Escape => {
                std::process::exit(0);
