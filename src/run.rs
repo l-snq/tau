@@ -12,8 +12,7 @@ use gtk::{
     glib
 };
 use std::collections::HashMap;
-use crate::utils::AppField;
-use crate::actions::on_app_activate;
+use crate::{actions::on_app_activate, utils::{string_to_command, AppField}};
 use std::process::Command; // FOR FUTURE USE
 
 pub fn draw_ui(application: &Application) {
@@ -32,10 +31,6 @@ pub fn draw_ui(application: &Application) {
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
    let list_box = gtk::ListBox::builder().name("who up listin they box rn").build();
-   //println!("******{:?}", list_box.select_row(Some(0)));
-   if list_box.has_focus() {
-      println!("list_box has focus")
-   };
 
    let scrolled_window = gtk::ScrolledWindow::builder()
         .name("scrollable window")
@@ -63,21 +58,16 @@ pub fn draw_ui(application: &Application) {
             .build();
        let title = gtk::Label::new(Some(&app_name));
 
-       //let list_row = gtk::ListBoxRow::builder().name(&app_name).build();
-
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
        hash.insert(app_name.clone(), icon_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
        // using clone()
 
-       captured_app.update_fields(app_name.clone(), app_name.clone()); // Still using clone :|
-
        //println!("{:?}", icon_box.widget_name());
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
        list_box.append(&icon_box);
-       
    }
 
    let search_label = gtk::Label::builder()
@@ -99,8 +89,14 @@ pub fn draw_ui(application: &Application) {
                std::process::exit(0);
             },
             gdk::Key::Return if row.has_focus() => {
-               println!("this row {:?} has focus", &row);
-               // do your magic here  
+               if let Some(specific_row_child) = row.child() {
+                  // get the hash map that corresponds with the widget name of the child
+                  let key_value_of_child_widget_name = specific_row_child.widget_name().to_string();
+                  hash.get_key_value(&key_value_of_child_widget_name);
+                  string_to_command(&key_value_of_child_widget_name);
+                  string_to_command(&key_value_of_child_widget_name);
+               }
+               std::process::exit(0);
             },
             _ => (),
       }

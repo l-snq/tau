@@ -12,3 +12,11 @@ gtk4 = "0.7.3"
 gtk4-layer-shell = "0.2.0"
 winit = "0.28.6"
 xdg = "2.5.0"
+
+[dependencies.uuid]
+version = "1.6.1"
+features = [
+    "v4",
+    "fast-rng",
+    "macro-diagnostics",
+]
