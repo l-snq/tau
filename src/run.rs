@@ -12,8 +12,7 @@ use gtk::{
     glib
 };
 use std::collections::HashMap;
-use crate::{actions::on_app_activate, utils::{string_to_command, AppField}};
-use std::process::Command; // FOR FUTURE USE
+use crate::{actions::on_app_activate, utils::{string_to_command }};
 
 pub fn draw_ui(application: &Application) {
    
@@ -36,10 +35,6 @@ pub fn draw_ui(application: &Application) {
         .name("scrollable window")
         .hscrollbar_policy(gtk::PolicyType::Never)
         .build();
-
-   let text = gtk::Label::new(None);     
-
-   let mut captured_app = AppField::new();
 
    let mut hash = HashMap::new();
 
@@ -70,13 +65,6 @@ pub fn draw_ui(application: &Application) {
        list_box.append(&icon_box);
    }
 
-   let search_label = gtk::Label::builder()
-      .label("Type to search for an app")
-      .vexpand(true)
-      .halign(gtk::Align::Center)
-      .valign(gtk::Align::Center)
-      .build();
-
    scrolled_window.set_child(Some(&list_box));
 
    // THIS IS FOR THE KEY EVENTS
@@ -84,23 +72,22 @@ pub fn draw_ui(application: &Application) {
 
    event_controller.connect_key_pressed(move |_, key, _, _| {
       if let Some(row) = list_box.selected_row() {
-         match key {
-            gdk::Key::Escape => {
-               std::process::exit(0);
-            },
-            gdk::Key::Return if row.has_focus() => {
-               if let Some(specific_row_child) = row.child() {
-                  // get the hash map that corresponds with the widget name of the child
-                  let key_value_of_child_widget_name = specific_row_child.widget_name().to_string();
-                  hash.get_key_value(&key_value_of_child_widget_name);
-                  string_to_command(&key_value_of_child_widget_name);
-                  string_to_command(&key_value_of_child_widget_name);
-               }
-               std::process::exit(0);
-            },
-            _ => (),
+            match key {
+               gdk::Key::Escape => {
+                  std::process::exit(0);
+               },
+               gdk::Key::Return if row.has_focus() => {
+                  if let Some(specific_row_child) = row.child() {
+                     // get the hash map that corresponds with the widget name of the child
+                     let key_value_of_child_widget_name = specific_row_child.widget_name().to_string();
+                     hash.get_key_value(&key_value_of_child_widget_name);
+                     string_to_command(&key_value_of_child_widget_name);
+                  }
+                  std::process::exit(0);
+               },
+               _ => (),
+         }
       }
-   }
       glib::Propagation::Proceed
    });
 
