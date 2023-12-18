@@ -83,7 +83,7 @@ pub fn draw_ui(application: &Application) {
                      hash.get_key_value(&key_value_of_child_widget_name);
                      string_to_command(&key_value_of_child_widget_name);
                   }
-                  std::process::exit(0);
+                  std::process::exit(0); // this isn't being reached
                },
                _ => (),
          }
