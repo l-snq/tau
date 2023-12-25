@@ -1,6 +1,5 @@
-use gio::ffi::g_input_stream_has_pending;
 use uuid::Uuid;
-use gtk4::{EventControllerKey, ListBox, Box};
+use gtk4::{EventControllerKey, ListBox, Box, gio};
 use std::{collections::HashMap, process::Command};
 #[derive(Debug, Clone)]
 pub struct AppField {
