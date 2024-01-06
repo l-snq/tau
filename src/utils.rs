@@ -29,6 +29,6 @@ pub fn string_to_command(input: &str) {
     let fms_str = &input.trim().to_lowercase();
 
     println!("the string that is formatted= {:?}", &fms_str);
-    let mut echo_command = Command::new(&fms_str).output().expect("something went wrong trying to read the command");
+    let mut echo_command = Command::new(&fms_str).spawn().expect("something went wrong trying to read the command");
     let hello = echo_command.stdout;
 }
