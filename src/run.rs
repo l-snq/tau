@@ -56,6 +56,7 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
+       // #if let Err(err) = app.launch(&[], Some(&context)
        hash.insert(app_name.clone(), icon_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
        // using clone()
 
@@ -82,6 +83,7 @@ pub fn draw_ui(application: &Application) {
                      let key_value_of_child_widget_name = specific_row_child.widget_name().to_string();
                      hash.get_key_value(&key_value_of_child_widget_name);
                      string_to_command(&key_value_of_child_widget_name);
+                     
                   }
                   std::process::exit(0); // this isn't being reached
                },
