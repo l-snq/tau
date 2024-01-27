@@ -56,9 +56,9 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
+       let app_launch = gio::AppInfo::create_from_commandline("xterm", Some(&app_name), gio::AppInfoCreateFlags::empty());
 
-       // if let Err(err) = app.launch(&[], Some(&context)
-       hash.insert(app_name.clone(), icon_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
+       hash.insert(app_launch.clone(), icon_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
        // using clone()
 
        //println!("{:?}", icon_box.widget_name());
