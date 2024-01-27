@@ -56,7 +56,8 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
-       // #if let Err(err) = app.launch(&[], Some(&context)
+
+       // if let Err(err) = app.launch(&[], Some(&context)
        hash.insert(app_name.clone(), icon_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
        // using clone()
 
@@ -94,7 +95,6 @@ pub fn draw_ui(application: &Application) {
    });
 
    draw_window.add_controller(event_controller);
-   //input_handling(&application, &draw_window);
 
    on_app_activate(&application);
    draw_window.set_child(Some(&scrolled_window));
