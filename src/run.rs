@@ -43,8 +43,9 @@ pub fn draw_ui(application: &Application) {
    // refactor this whole fucking thing dude. This is a mess. Coordinate the hashmap with the UI
    // properly.
    for app in apps {
-
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+       // let app_executable = &app.executable();
+       // println!("app /////// {:?}", &app_executable);
        let app_name = app.display_name().to_string();
        icon_box.grab_focus();
        icon_box.set_widget_name(&app_name);
@@ -56,10 +57,17 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
-       let app_launch = gio::AppInfo::create_from_commandline("xterm", Some(&app_name), gio::AppInfoCreateFlags::empty());
+       // match app.executable() {
+       //      _ => {
+       //      let launch_app = gio::AppInfo::launch(&app, &[], gio::AppLaunchContext::NONE);
+       //   }
+       // }
 
-       hash.insert(app_launch.clone(), icon_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
+       //hash.insert(app.clone(), list_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
        // using clone()
+       let app_id = gio::AppInfo::id(&app);
+       hash.insert(list_box.clone(), app_id.clone());
+       println!("{:?}", hash);
 
        //println!("{:?}", icon_box.widget_name());
        icon_box.prepend(&title);
@@ -81,12 +89,13 @@ pub fn draw_ui(application: &Application) {
                gdk::Key::Return if row.has_focus() => {
                   if let Some(specific_row_child) = row.child() {
                      // get the hash map that corresponds with the widget name of the child
-                     let key_value_of_child_widget_name = specific_row_child.widget_name().to_string();
-                     hash.get_key_value(&key_value_of_child_widget_name);
-                     string_to_command(&key_value_of_child_widget_name);
+                     println!("{:?}", specific_row_child.widget_name());
+
+                     let widget_str_name = specific_row_child.widget_name().to_string();
+                     //string_to_command(&key_value_of_child_widget_name);
                      
                   }
-                  std::process::exit(0); // this isn't being reached
+                  std::process::exit(0); 
                },
                _ => (),
          }

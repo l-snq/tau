@@ -1,5 +1,6 @@
 use uuid::Uuid;
-use gtk4::{EventControllerKey, ListBox, Box, gio};
+use gtk4 as gtk;
+use gtk::{EventControllerKey, ListBox, Box, gio, prelude::WidgetExt};
 use std::{collections::HashMap, process::Command};
 #[derive(Debug, Clone)]
 pub struct AppField {
@@ -31,4 +32,15 @@ pub fn string_to_command(input: &str) {
     println!("the string that is formatted= {:?}", &fms_str);
     let mut echo_command = Command::new(&fms_str).spawn().expect("something went wrong trying to read the command");
     let hello = echo_command.stdout;
+}
+
+pub fn widget_comparison(widget1: &gtk::Widget, widget2: &gtk::Widget) -> bool {
+    // WHY IS NAME 1 AND NAME 2 FOUND AS OPTION???
+    if let (Some(name1), Some(name2)) = (
+        widget1.widget_name().as_str(), 
+        widget2.widget_name().as_str()
+    ) {
+        return name1 == name2;
+    };
+    false
 }
