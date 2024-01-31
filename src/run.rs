@@ -12,7 +12,7 @@ use gtk::{
     glib
 };
 use std::collections::HashMap;
-use crate::{actions::on_app_activate, utils::{ widget_comparison }};
+use crate::actions::on_app_activate;
 
 pub fn draw_ui(application: &Application) {
    
@@ -44,8 +44,6 @@ pub fn draw_ui(application: &Application) {
    // properly.
    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
-       // let app_executable = &app.executable();
-       // println!("app /////// {:?}", &app_executable);
        let app_name = app.display_name().to_string();
        icon_box.grab_focus();
        icon_box.set_widget_name(&app_name);
@@ -57,16 +55,9 @@ pub fn draw_ui(application: &Application) {
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
        }
-       // match app.executable() {
-       //      _ => {
-       //      let launch_app = gio::AppInfo::launch(&app, &[], gio::AppLaunchContext::NONE);
-       //   }
-       // }
-
-       //hash.insert(app.clone(), list_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
-       // using clone()
-       let app_id = gio::AppInfo::id(&app);
-       hash.insert(icon_box.clone(), app_id.clone());
+      
+       hash.insert(icon_box.clone(), app.clone()); // clone isn't really the best way to do this i
+      // think?
 
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
@@ -88,10 +79,9 @@ pub fn draw_ui(application: &Application) {
                   if let Some(specific_row_child) = row.child() {
                      // get the hash map that corresponds with the widget name of the child
                      let query_child = specific_row_child;
-
                      let hashed_child = hash.contains_key(&query_child);
-                     println!("{:?}", hash.contains_key(&query_child));
-                     //widget_comparison(&query_child, &hashed_child);
+                     let captured_app = hash.get(&query_child).unwrap();
+                     let launch_app = gio::AppInfo::launch(&captured_app, &[], gio::AppLaunchContext::NONE);
                   }
                   std::process::exit(0); 
                },
