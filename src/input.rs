@@ -1,11 +1,10 @@
 use gtk4 as gtk;
-use gtk::gio::AppInfo;
-use gtk::{Application, ApplicationWindow, SearchBar};
+use gtk::{gdk, Application, ApplicationWindow, gio::AppInfo, Shortcut, SearchBar, EventControllerKey, glib::Cast};
 
-pub fn compare_inputs(label: &str, input: &str) {
-    // pass in label here and compare it to user input
-
-    if label == input {
-        return println!("your items match {:?}, {:?}", label, input); 
-    }
+pub fn input_handling(application: &Application) {
+    // select specific app, then fetch the exec
+    let event_controller = EventControllerKey::new();
+    //let window = ApplicationWindow::new(application);
+    
 }
+

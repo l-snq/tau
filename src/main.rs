@@ -1,14 +1,12 @@
-use std::fs::File;
-use std::io::{Error, Write};
-
 use gtk4 as gtk;
 
-use xdg;
 use gtk::prelude::*;
 use gtk::{glib, Application};
 
 pub mod run;
 pub mod input;
+pub mod utils;
+pub mod actions;
 
 const APP_ID: &str = "org.tau.Main";
 
