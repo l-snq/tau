@@ -66,10 +66,8 @@ pub fn draw_ui(application: &Application) {
        //hash.insert(app.clone(), list_box.clone()); // THIS IS EXPENSIVE, Consider alternatives to
        // using clone()
        let app_id = gio::AppInfo::id(&app);
-       hash.insert(list_box.clone(), app_id.clone());
-       println!("{:?}", hash);
+       hash.insert(icon_box.widget_name().to_string().clone(), app_id.clone());
 
-       //println!("{:?}", icon_box.widget_name());
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
        list_box.append(&icon_box);
@@ -89,12 +87,11 @@ pub fn draw_ui(application: &Application) {
                gdk::Key::Return if row.has_focus() => {
                   if let Some(specific_row_child) = row.child() {
                      // get the hash map that corresponds with the widget name of the child
-                     println!("{:?}", specific_row_child.widget_name());
+                     let query_child = specific_row_child.widget_name().to_string();
 
-                     // hash.get_key_value(k)
-                     // widget_comparison(widget1, widget2)
-                     let widget_str_name = specific_row_child.widget_name().to_string();
-                     
+                     let hashed_child = hash.contains_key(&query_child);
+                     println!("{:?}", hash.contains_key(&query_child));
+                     //widget_comparison(&query_child, &hashed_child);
                   }
                   std::process::exit(0); 
                },
