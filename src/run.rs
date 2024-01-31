@@ -12,7 +12,7 @@ use gtk::{
     glib
 };
 use std::collections::HashMap;
-use crate::{actions::on_app_activate, utils::{string_to_command }};
+use crate::{actions::on_app_activate, utils::{ widget_comparison }};
 
 pub fn draw_ui(application: &Application) {
    
@@ -91,8 +91,9 @@ pub fn draw_ui(application: &Application) {
                      // get the hash map that corresponds with the widget name of the child
                      println!("{:?}", specific_row_child.widget_name());
 
+                     // hash.get_key_value(k)
+                     // widget_comparison(widget1, widget2)
                      let widget_str_name = specific_row_child.widget_name().to_string();
-                     //string_to_command(&key_value_of_child_widget_name);
                      
                   }
                   std::process::exit(0); 

@@ -35,10 +35,10 @@ pub fn string_to_command(input: &str) {
 }
 
 pub fn widget_comparison(widget1: &gtk::Widget, widget2: &gtk::Widget) -> bool {
-    // WHY IS NAME 1 AND NAME 2 FOUND AS OPTION???
+    // wrapping widget1 and widget2 in Some() to match types
     if let (Some(name1), Some(name2)) = (
-        widget1.widget_name().as_str(), 
-        widget2.widget_name().as_str()
+        Some(widget1.widget_name().as_str()), 
+        Some(widget2.widget_name().as_str())
     ) {
         return name1 == name2;
     };
