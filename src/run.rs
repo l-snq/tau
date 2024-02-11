@@ -36,12 +36,18 @@ pub fn draw_ui(application: &Application) {
         .hscrollbar_policy(gtk::PolicyType::Never)
         .build();
 
+   let search_container = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+   let search_bar = gtk::SearchBar::new();
+   let search_entry = gtk::SearchEntry::new();
+
+   //search_bar.set_child(Some(&search_entry));
+   search_bar.connect_entry(&search_entry);
+   search_container.append(&search_bar);
+
    let mut hash = HashMap::new();
 
    let apps = gio::AppInfo::all(); 
 
-   // refactor this whole fucking thing dude. This is a mess. Coordinate the hashmap with the UI
-   // properly.
    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let app_name = app.display_name().to_string();
@@ -59,12 +65,15 @@ pub fn draw_ui(application: &Application) {
        hash.insert(icon_box.clone(), app.clone()); // clone isn't really the best way to do this i
       // think?
 
-       icon_box.prepend(&title);
+       icon_box.append(&title);
        icon_box.append(&image_icon_setup);
        list_box.append(&icon_box);
    }
 
-   scrolled_window.set_child(Some(&list_box));
+   let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
+   parent_box.prepend(&search_container);
+   parent_box.append(&list_box);
+   scrolled_window.set_child(Some(&parent_box));
 
    // THIS IS FOR THE KEY EVENTS
    let event_controller = gtk::EventControllerKey::new();
