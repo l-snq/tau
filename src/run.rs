@@ -40,7 +40,6 @@ pub fn draw_ui(application: &Application) {
    let search_bar = gtk::SearchBar::new();
    let search_entry = gtk::SearchEntry::new();
 
-   //search_bar.set_child(Some(&search_entry));
    search_bar.connect_entry(&search_entry);
    search_container.append(&search_bar);
 
