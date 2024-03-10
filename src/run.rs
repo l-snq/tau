@@ -9,7 +9,7 @@ use gtk::{
     SearchEntry,
     gio,
     gdk,
-    glib
+    glib::{self, clone}
 };
 use std::collections::HashMap;
 use crate::actions::on_app_activate;
@@ -40,6 +40,17 @@ pub fn draw_ui(application: &Application) {
 
    let apps = gio::AppInfo::all(); 
 
+   let bar = SearchBar::builder()
+       .valign(gtk::Align::Start)
+       .key_capture_widget(&draw_window)
+       .build();
+   let entry = SearchEntry::new();
+   entry.set_hexpand(true);
+   bar.set_child(Some(&entry));
+
+   let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
+
+   parent_box.prepend(&bar);
    // refactor this whole fucking thing dude. This is a mess. Coordinate the hashmap with the UI
    // properly.
    for app in apps {
@@ -62,9 +73,15 @@ pub fn draw_ui(application: &Application) {
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
        list_box.append(&icon_box);
+       parent_box.append(&list_box);
    }
 
-   scrolled_window.set_child(Some(&list_box));
+   scrolled_window.set_child(Some(&parent_box));
+
+   // continue some search entry logic here
+   entry.connect_search_started(clone!(@weak list_box => move |_| {
+       list_box.hide();
+   }));
 
    // THIS IS FOR THE KEY EVENTS
    let event_controller = gtk::EventControllerKey::new();
