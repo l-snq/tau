@@ -60,6 +60,9 @@ pub fn draw_ui(application: &Application) {
 
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
+            icon_box.prepend(&title);
+            icon_box.append(&image_icon_setup);
+            list_box.append(&icon_box);
        } else {
            println!("the app has no icon {:?}", &app.display_name());
        }
@@ -67,9 +70,6 @@ pub fn draw_ui(application: &Application) {
        hash.insert(icon_box.clone(), app.clone()); // clone isn't really the best way to do this i
       // think?
 
-       icon_box.prepend(&title);
-       icon_box.append(&image_icon_setup);
-       list_box.append(&icon_box);
    }
 
    scrolled_window.set_child(Some(&list_box));
