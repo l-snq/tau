@@ -48,11 +48,6 @@ pub fn draw_ui(application: &Application) {
    entry.set_hexpand(true);
    bar.set_child(Some(&entry));
 
-   let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
-
-   parent_box.prepend(&bar);
-   // refactor this whole fucking thing dude. This is a mess. Coordinate the hashmap with the UI
-   // properly.
    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let app_name = app.display_name().to_string();
@@ -65,6 +60,8 @@ pub fn draw_ui(application: &Application) {
 
        if let Some(gtk_icon_name) = app.icon() {
             image_icon_setup.set_from_gicon(&gtk_icon_name);
+       } else {
+           println!("the app has no icon {:?}", &app.display_name());
        }
       
        hash.insert(icon_box.clone(), app.clone()); // clone isn't really the best way to do this i
@@ -73,10 +70,9 @@ pub fn draw_ui(application: &Application) {
        icon_box.prepend(&title);
        icon_box.append(&image_icon_setup);
        list_box.append(&icon_box);
-       parent_box.append(&list_box);
    }
 
-   scrolled_window.set_child(Some(&parent_box));
+   scrolled_window.set_child(Some(&list_box));
 
    // continue some search entry logic here
    entry.connect_search_started(clone!(@weak list_box => move |_| {
