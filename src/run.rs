@@ -40,8 +40,6 @@ pub fn draw_ui(application: &Application) {
 
    let apps = gio::AppInfo::all(); 
 
-   // refactor this whole fucking thing dude. This is a mess. Coordinate the hashmap with the UI
-   // properly.
    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let app_name = app.display_name().to_string();
