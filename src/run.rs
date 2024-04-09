@@ -35,12 +35,15 @@ pub fn draw_ui(application: &Application) {
    let bar = SearchBar::builder()
        .valign(gtk::Align::Start)
        .key_capture_widget(&draw_window)
+       .show_close_button(true)
        .build();
    let entry = SearchEntry::new();
    entry.set_hexpand(true);
-   bar.set_child(Some(&entry));
+   bar.connect_entry(&entry);
 
    let icon_theme = IconTheme::default();
+
+   let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
 
    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
@@ -75,12 +78,15 @@ pub fn draw_ui(application: &Application) {
 
    }
 
-   scrolled_window.set_child(Some(&list_box));
-
    // continue some search entry logic here
-   entry.connect_search_started(clone!(@weak list_box => move |_| {
-       list_box.hide();
-   }));
+   entry.connect_search_started(|entry| {
+       let text = entry.text();
+       println!("{:?}", text);
+   });
+
+   parent_box.prepend(&entry);
+   parent_box.append(&list_box);
+   scrolled_window.set_child(Some(&parent_box));
 
    // THIS IS FOR THE KEY EVENTS
    let event_controller = gtk::EventControllerKey::new();
