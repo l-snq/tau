@@ -1,15 +1,7 @@
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    prelude::*, 
-    Application,
-    ApplicationWindow,
-    Image, 
-    SearchBar,
-    SearchEntry,
-    gio,
-    gdk,
-    glib::{self, clone}
+    gdk, gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::HashMap;
 use crate::actions::on_app_activate;
@@ -48,6 +40,8 @@ pub fn draw_ui(application: &Application) {
    entry.set_hexpand(true);
    bar.set_child(Some(&entry));
 
+   let icon_theme = IconTheme::default();
+
    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let app_name = app.display_name().to_string();
@@ -59,14 +53,23 @@ pub fn draw_ui(application: &Application) {
        let title = gtk::Label::new(Some(&app_name));
 
        if let Some(gtk_icon_name) = app.icon() {
-            image_icon_setup.set_from_gicon(&gtk_icon_name);
-            icon_box.prepend(&title);
-            icon_box.append(&image_icon_setup);
-            list_box.append(&icon_box);
-       } else {
+            let some_icon_theme = Some(icon_theme.lookup_by_gicon(
+                    &gtk_icon_name, 
+                    16, 
+                    16, 
+                    TextDirection::None, 
+                    IconLookupFlags::FORCE_REGULAR));
+
+            if some_icon_theme.is_some() {
+                image_icon_setup.set_from_gicon(&gtk_icon_name);
+                icon_box.prepend(&title);
+                icon_box.append(&image_icon_setup);
+                list_box.append(&icon_box);
+            } 
+           } else {
            println!("the app has no icon {:?}", &app.display_name());
        }
-      
+
        hash.insert(icon_box.clone(), app.clone()); // clone isn't really the best way to do this i
       // think?
 
