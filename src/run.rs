@@ -1,10 +1,11 @@
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gdk, gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
+    gdk, gio, glib, prelude::*, Application, ApplicationWindow, 
+    IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::HashMap;
-use crate::actions::on_app_activate;
+use crate::{actions::on_app_activate, utils::hash_match_and_launch_app};
 
 pub fn draw_ui(application: &Application) {
    
@@ -100,10 +101,7 @@ pub fn draw_ui(application: &Application) {
                gdk::Key::Return if row.has_focus() => {
                   if let Some(specific_row_child) = row.child() {
                      // get the hash map that corresponds with the widget name of the child
-                     let query_child = specific_row_child;
-                     let hashed_child = hash.contains_key(&query_child);
-                     let captured_app = hash.get(&query_child).unwrap();
-                     let launch_app = gio::AppInfo::launch(&captured_app, &[], gio::AppLaunchContext::NONE);
+                     hash_match_and_launch_app(specific_row_child, &hash);
                   }
                   std::process::exit(0); 
                },
