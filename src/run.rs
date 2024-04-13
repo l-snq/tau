@@ -35,7 +35,7 @@ pub fn draw_ui(application: &Application) {
 
    let bar = SearchBar::builder()
        .valign(gtk::Align::Start)
-       .key_capture_widget(&draw_window)
+       .key_capture_widget(&scrolled_window)
        .show_close_button(true)
        .build();
    let entry = SearchEntry::new();
@@ -81,8 +81,11 @@ pub fn draw_ui(application: &Application) {
 
    // continue some search entry logic here
    entry.connect_search_started(|entry| {
-       let text = entry.text();
-       println!("{:?}", text);
+       println!("search has started");
+   });
+   // entry search
+   entry.connect_stop_search(|entry| {
+       println!("search has stopped");
    });
 
    parent_box.prepend(&entry);
