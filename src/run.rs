@@ -78,6 +78,7 @@ pub fn draw_ui(application: &Application) {
       // think?
 
    }
+   list_box.prepend(&entry);
 
    // continue some search entry logic here
    entry.connect_search_started(clone!(@weak list_box => move |entry| {
@@ -96,7 +97,6 @@ pub fn draw_ui(application: &Application) {
        println!("search has stopped: {}", entry.text());
    }));
 
-   parent_box.prepend(&entry);
    parent_box.append(&list_box);
    scrolled_window.set_child(Some(&parent_box));
 
