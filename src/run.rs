@@ -1,7 +1,7 @@
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gdk, gio, glib, prelude::*, Application, ApplicationWindow, 
+    gdk, gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::HashMap;
@@ -18,7 +18,7 @@ pub fn draw_ui(application: &Application) {
 
    // set up layer shell
    LayerShell::init_layer_shell(&draw_window);
-   LayerShell::set_layer(&draw_window, Layer::Overlay);
+   LayerShell::set_layer(&draw_window, Layer::Top);
    LayerShell::set_keyboard_mode(&draw_window, KeyboardMode::OnDemand);
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
@@ -81,12 +81,19 @@ pub fn draw_ui(application: &Application) {
 
    // continue some search entry logic here
    entry.connect_search_started(|entry| {
-       println!("search has started");
+       println!("something started being searched, i guess");
    });
-   // entry search
-   entry.connect_stop_search(|entry| {
+   entry.connect_search_changed(clone!(@weak list_box => move |entry| {
+      let test_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+      let label_test = gtk::Label::new(Some("whatever"));
+      test_box.prepend(&label_test);
+      list_box.append(&test_box);
+      println!("search has changed input: {:?}", entry.text());
+   }));
+   // what to do when the search is stopped 
+   entry.connect_stop_search(clone!(@weak list_box => move |entry| {
        println!("search has stopped");
-   });
+   }));
 
    parent_box.prepend(&entry);
    parent_box.append(&list_box);
