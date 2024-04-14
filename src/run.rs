@@ -81,7 +81,7 @@ pub fn draw_ui(application: &Application) {
 
    // continue some search entry logic here
    entry.connect_search_started(clone!(@weak list_box => move |entry| {
-       println!("something started being searched, i guess");
+       println!("something started being searched, i guess {}", entry.text());
    }));
 
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
@@ -93,7 +93,7 @@ pub fn draw_ui(application: &Application) {
    }));
    // what to do when the search is stopped 
    entry.connect_stop_search(clone!(@weak list_box => move |entry| {
-       println!("search has stopped");
+       println!("search has stopped: {}", entry.text());
    }));
 
    parent_box.prepend(&entry);
@@ -104,11 +104,14 @@ pub fn draw_ui(application: &Application) {
    let event_controller = gtk::EventControllerKey::new();
 
    event_controller.connect_key_pressed(move |_, key, _, _| {
+      match key {
+          gdk::Key::Escape => {
+              std::process::exit(0);
+          },
+          _ => ()
+      }
       if let Some(row) = list_box.selected_row() {
             match key {
-               gdk::Key::Escape => {
-                  std::process::exit(0);
-               },
                gdk::Key::Return if row.has_focus() => {
                   if let Some(specific_row_child) = row.child() {
                      // get the hash map that corresponds with the widget name of the child
