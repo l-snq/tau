@@ -80,9 +80,10 @@ pub fn draw_ui(application: &Application) {
    }
 
    // continue some search entry logic here
-   entry.connect_search_started(|entry| {
+   entry.connect_search_started(clone!(@weak list_box => move |entry| {
        println!("something started being searched, i guess");
-   });
+   }));
+
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
       let test_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
       let label_test = gtk::Label::new(Some("whatever"));
