@@ -37,9 +37,18 @@ pub fn string_to_command(input: &str) {
     let hello = echo_command.stdout;
 }
 
-pub fn hash_match_and_launch_app(widget: gtk4::Widget, hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>) {
+pub fn hash_match_and_launch_app(
+    widget: gtk4::Widget, 
+    hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>) {
      let query_child = &widget;
      let hashed_child = hash.contains_key(query_child);
      let captured_app = hash.get(query_child).unwrap();
-     let launch_app = gio::AppInfo::launch(&captured_app, &[], gio::AppLaunchContext::NONE);
+     let launch_app = gio::AppInfo::launch(
+         &captured_app, 
+         &[], 
+         gio::AppLaunchContext::NONE);
 }
+
+/* pub fn load_app_match_search(search_string: str) {
+
+} */

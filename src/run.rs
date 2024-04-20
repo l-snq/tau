@@ -74,8 +74,9 @@ pub fn draw_ui(application: &Application) {
            println!("the app has no icon {:?}", &app.display_name());
        }
 
-       hash.insert(icon_box.clone(), app.clone()); // clone isn't really the best way to do this i
-      // think?
+       hash.insert(icon_box.clone(), app.clone()); 
+       // clone isn't really the best way to do this i
+       // think?
 
    }
    list_box.prepend(&entry);
@@ -86,13 +87,21 @@ pub fn draw_ui(application: &Application) {
    }));
 
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
-      let test_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
-      let label_test = gtk::Label::new(Some("whatever"));
-      test_box.prepend(&label_test);
-      list_box.append(&test_box);
-      println!("search has changed input: {:?}", entry.text());
+       let relevant_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+       let user_text = entry.text().to_string();
+       let apps = gio::AppInfo::all();
+       for app in apps {
+           let app_name = app.display_name().to_string();
+           let app_label = gtk::Label::new(Some(&app_name));
+           if app_name == user_text {
+               relevant_box.prepend(&app_label);
+               list_box.append(&relevant_box);
+               println!("there is a match");
+           }
+       }
    }));
-   // what to do when the search is stopped 
+   // what to do when the search is stopped. This doesn't seem to be working?
+   // how does it detect if you have stopped?
    entry.connect_stop_search(clone!(@weak list_box => move |entry| {
        println!("search has stopped: {}", entry.text());
    }));
