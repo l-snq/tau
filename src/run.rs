@@ -35,12 +35,12 @@ pub fn draw_ui(application: &Application) {
 
    let bar = SearchBar::builder()
        .valign(gtk::Align::Start)
-       .key_capture_widget(&scrolled_window)
        .show_close_button(true)
        .build();
    let entry = SearchEntry::new();
    entry.set_hexpand(true);
    bar.connect_entry(&entry);
+   bar.set_key_capture_widget(Some(&entry));
 
    let icon_theme = IconTheme::default();
 
@@ -87,6 +87,7 @@ pub fn draw_ui(application: &Application) {
    }));
 
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
+       println!("{}", entry.text());
        let relevant_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        let user_text = entry.text().to_string();
        let apps = gio::AppInfo::all();
