@@ -80,7 +80,7 @@ pub fn draw_ui(application: &Application) {
        // think?
 
    }
-   list_box.prepend(&entry);
+   parent_box.prepend(&entry);
 
    //bar.set_search_mode(true);
    // continue some search entry logic here
@@ -128,15 +128,6 @@ pub fn draw_ui(application: &Application) {
                   // specify if the row is the search bar, 
                   // and if it is, set the search mode on?
                   if let Some(specific_row_child) = row.child() {
-                     // get the hash map that corresponds with the widget name of the child
-                     let widget_name = "entry";
-                     if (specific_row_child.widget_name() == widget_name 
-                         && specific_row_child.has_focus()) {
-                         // whatever
-                         println!("you have a match");
-                     } else {
-                         println!("there is no match"); 
-                     }
                      hash_match_and_launch_app(specific_row_child, &hash);
                   }
                   std::process::exit(0); 
