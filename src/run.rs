@@ -67,9 +67,9 @@ pub fn draw_ui(application: &Application) {
 
             if some_icon_theme.is_some() {
                 image_icon_setup.set_from_gicon(&gtk_icon_name);
-                icon_box.prepend(&title);
+                /* icon_box.prepend(&title);
                 icon_box.append(&image_icon_setup);
-                list_box.append(&icon_box);
+                list_box.append(&icon_box); */
             } 
            } else {
            println!("the app has no icon {:?}", &app.display_name());
@@ -78,10 +78,9 @@ pub fn draw_ui(application: &Application) {
        hash.insert(icon_box.clone(), app.clone()); 
        // clone isn't really the best way to do this i
        // think?
-
-   }
+}
    parent_box.prepend(&entry);
-
+   
    //bar.set_search_mode(true);
    // continue some search entry logic here
    entry.connect_search_started(clone!(@weak list_box => move |entry| {
@@ -94,12 +93,14 @@ pub fn draw_ui(application: &Application) {
        let user_text = entry.text().to_string();
        let apps = gio::AppInfo::all();
        for app in apps {
-           let app_name = app.display_name().to_string();
+           let app_name = app.display_name().to_string().to_lowercase();
            let app_label = gtk::Label::new(Some(&app_name));
-           if app_name == user_text {
+           println!("app text: {}", app_name);
+           if user_text == app_name { 
                relevant_box.prepend(&app_label);
-               list_box.prepend(&relevant_box);
-               println!("there is a match");
+               list_box.prepend(&relevant_box)
+           } else {
+               println!("there is no match =[");
            }
        }
    }));

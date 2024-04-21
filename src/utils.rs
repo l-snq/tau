@@ -1,7 +1,7 @@
 use uuid::Uuid;
 use gtk4::prelude::AppInfoExt;
 use gtk4 as gtk;
-use gtk::gio;
+use gtk::{gio, Image, IconLookupFlags, IconTheme, Box, TextDirection};
 use std::process::Command;
 #[derive(Debug, Clone)]
 pub struct AppField {
