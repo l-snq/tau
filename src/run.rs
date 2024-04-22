@@ -1,7 +1,7 @@
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gdk, gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
+    gdk, gio, glib::{self, clone, translate::FromGlibPtrNone}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::HashMap;
@@ -95,9 +95,12 @@ pub fn draw_ui(application: &Application) {
        for app in apps {
            let app_name = app.display_name().to_string().to_lowercase();
            let app_label = gtk::Label::new(Some(&app_name));
-           println!("app text: {}", app_name);
            if user_text == app_name { 
                relevant_box.prepend(&app_label);
+               relevant_box.set_cursor(gdk::Cursor::from_name("default", None).as_ref());
+               //relevant_box.grab_focus();
+               relevant_box.set_focus_on_click(false);
+
                list_box.prepend(&relevant_box)
            } else {
                println!("there is no match =[");
@@ -130,6 +133,8 @@ pub fn draw_ui(application: &Application) {
                   // and if it is, set the search mode on?
                   if let Some(specific_row_child) = row.child() {
                      hash_match_and_launch_app(specific_row_child, &hash);
+                  } else {
+                      println!("uh oh, theres no match from your query");
                   }
                   std::process::exit(0); 
                },
