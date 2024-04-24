@@ -10,7 +10,7 @@ use crate::{actions::on_app_activate, utils::hash_match_and_launch_app};
 pub fn draw_ui(application: &Application) {
    
    let draw_window = ApplicationWindow::builder()
-        .default_width(700)
+        .default_width(300)
         .default_height(300)
         .application(application)
         .title("Tau")
