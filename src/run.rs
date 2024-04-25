@@ -81,11 +81,20 @@ pub fn draw_ui(application: &Application) {
 }
    parent_box.prepend(&entry);
    
+   let search_event_controller = gtk::EventControllerKey::new();
+   search_event_controller.connect_key_pressed(move |_, key, _, _,| {
+       match key {
+           gdk::Key::Escape => { 
+               std::process::exit(0);
+           },
+           gdk::Key::Down => {
+           }
+           _ => ()
+       };
+       glib::Propagation::Proceed
+   });
    //bar.set_search_mode(true);
    // continue some search entry logic here
-   entry.connect_search_started(clone!(@weak list_box => move |entry| {
-       println!("something started being searched, i guess {}", entry.text());
-   }));
 
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
        println!("{}", entry.text());
@@ -99,9 +108,7 @@ pub fn draw_ui(application: &Application) {
                relevant_box.prepend(&app_label);
                relevant_box.set_cursor(gdk::Cursor::from_name("default", None).as_ref());
                list_box.prepend(&relevant_box)
-           } else {
-               println!("there is no match =[");
-           }
+           } 
        }
    }));
    // what to do when the search is stopped. This doesn't seem to be working?
@@ -118,8 +125,7 @@ pub fn draw_ui(application: &Application) {
 
    event_controller.connect_key_pressed(move |_, key, _, _| {
       match key {
-          gdk::Key::Escape => {
-              std::process::exit(0);
+          gdk::Key::Escape => { std::process::exit(0);
           },
           _ => ()
       }
