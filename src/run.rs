@@ -98,9 +98,6 @@ pub fn draw_ui(application: &Application) {
            if user_text == app_name { 
                relevant_box.prepend(&app_label);
                relevant_box.set_cursor(gdk::Cursor::from_name("default", None).as_ref());
-               //relevant_box.grab_focus();
-               relevant_box.set_focus_on_click(false);
-
                list_box.prepend(&relevant_box)
            } else {
                println!("there is no match =[");
