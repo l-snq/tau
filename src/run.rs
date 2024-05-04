@@ -1,11 +1,11 @@
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gdk, gio, glib::{self, clone, translate::FromGlibPtrNone}, prelude::*, Application, ApplicationWindow, 
+    gdk, gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
-use std::collections::HashMap;
-use crate::{actions::on_app_activate, utils::hash_match_and_launch_app};
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
+use crate::{actions::on_app_activate, utils::{hash_match_and_launch_app, user_app_name_comparison}};
 
 pub fn draw_ui(application: &Application) {
    
@@ -22,7 +22,9 @@ pub fn draw_ui(application: &Application) {
    LayerShell::set_keyboard_mode(&draw_window, KeyboardMode::OnDemand);
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
-   let list_box = gtk::ListBox::builder().name("who up listin they box rn").build();
+   let list_box = gtk::ListBox::builder()
+           .name("who up listin they box rn")
+           .build();
 
    let scrolled_window = gtk::ScrolledWindow::builder()
         .name("scrollable window")
@@ -30,6 +32,7 @@ pub fn draw_ui(application: &Application) {
         .build();
 
    let mut hash = HashMap::new();
+   let mut app_name_hash = HashMap::new();
 
    let apps = gio::AppInfo::all(); 
 
@@ -46,6 +49,8 @@ pub fn draw_ui(application: &Application) {
    let icon_theme = IconTheme::default();
 
    let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
+   parent_box.append(&list_box);
+   list_box.set_focusable(true);
 
    for app in apps {
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
@@ -74,50 +79,32 @@ pub fn draw_ui(application: &Application) {
            } else {
            println!("the app has no icon {:?}", &app.display_name());
        }
+       let str_app_name = app.display_name().to_string();
 
+       app_name_hash.insert(str_app_name.clone(), app.clone());
        hash.insert(icon_box.clone(), app.clone()); 
-       // clone isn't really the best way to do this i
-       // think?
-}
+    }
    parent_box.prepend(&entry);
    
-   let search_event_controller = gtk::EventControllerKey::new();
-   search_event_controller.connect_key_pressed(move |_, key, _, _,| {
-       match key {
-           gdk::Key::Escape => { 
-               std::process::exit(0);
-           },
-           gdk::Key::Down => {
-           }
-           _ => ()
-       };
-       glib::Propagation::Proceed
-   });
-   //bar.set_search_mode(true);
+   let entry_event_controller = gtk::EventControllerKey::new();
+   entry.add_controller(entry_event_controller);
    // continue some search entry logic here
+    entry.connect_stop_search(|entry| {
+       println!("search has stopped: {}", entry.text());
+    });
 
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
        println!("{}", entry.text());
        let relevant_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+       relevant_box.set_focusable(true);
        let user_text = entry.text().to_string();
        let apps = gio::AppInfo::all();
        for app in apps {
-           let app_name = app.display_name().to_string().to_lowercase();
-           let app_label = gtk::Label::new(Some(&app_name));
-           if user_text == app_name { 
-               relevant_box.prepend(&app_label);
-               relevant_box.set_cursor(gdk::Cursor::from_name("default", None).as_ref());
-               list_box.prepend(&relevant_box)
-           } 
+           let app_name = app.display_name().to_string();
+           user_app_name_comparison(user_text.clone(), app_name, &relevant_box, &list_box);
        }
-   }));
-   // what to do when the search is stopped. This doesn't seem to be working?
-   // how does it detect if you have stopped?
-   entry.connect_stop_search(clone!(@weak list_box => move |entry| {
-       println!("search has stopped: {}", entry.text());
-   }));
+   })); 
 
-   parent_box.append(&list_box);
    scrolled_window.set_child(Some(&parent_box));
 
    // THIS IS FOR THE KEY EVENTS
@@ -129,7 +116,11 @@ pub fn draw_ui(application: &Application) {
           },
           _ => ()
       }
+
       if let Some(row) = list_box.selected_row() {
+            if row.is_focusable() {
+                row.grab_focus();
+            }
             match key {
                gdk::Key::Return if row.has_focus() => {
                   // specify if the row is the search bar, 

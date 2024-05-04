@@ -1,5 +1,5 @@
 use uuid::Uuid;
-use gtk4::prelude::AppInfoExt;
+use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
 use gtk::{gio, Image, IconLookupFlags, IconTheme, Box, TextDirection};
 use std::process::Command;
@@ -49,6 +49,16 @@ pub fn hash_match_and_launch_app(
          gio::AppLaunchContext::NONE);
 }
 
-/* pub fn load_app_match_search(search_string: str) {
-
-} */
+pub fn user_app_name_comparison(
+    user_text: String, 
+    app_name: String,
+    rbox: &gtk::Box,
+    lbox: &gtk::ListBox
+    ) {
+    let app_label = gtk::Label::new(Some(&app_name));
+    if user_text == app_name { 
+       rbox.prepend(&app_label);
+       rbox.grab_focus();
+       lbox.prepend(rbox);
+    } 
+}
