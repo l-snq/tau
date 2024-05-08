@@ -126,6 +126,8 @@ pub fn draw_ui(application: &Application) {
    // THIS IS FOR THE KEY EVENTS 
    // Do we even fucking need this??? 
    // nope c:
+
+   // DELETE THIS FUCKING CODE IT DOESN'T WORK
    let event_controller = gtk::EventControllerKey::new();
 
    event_controller.connect_key_pressed(move |_, key, _, _| {

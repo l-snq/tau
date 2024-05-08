@@ -37,6 +37,7 @@ pub fn string_to_command(input: &str) {
     let hello = echo_command.stdout;
 }
 
+// this shouldn't be used!!!! but im stashing it c:
 pub fn hash_match_and_launch_app(
     widget: gtk4::Widget, 
     hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>) {
