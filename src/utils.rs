@@ -1,7 +1,8 @@
 use uuid::Uuid;
+use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
-use gtk::{EventControllerKey, ListBox, Box, gio, prelude::WidgetExt};
-use std::{collections::HashMap, process::Command};
+use gtk::{gio, Image, IconLookupFlags, IconTheme, Box, TextDirection};
+use std::process::Command;
 #[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
@@ -30,17 +31,34 @@ pub fn string_to_command(input: &str) {
     let fms_str = &input.trim().to_lowercase();
 
     println!("the string that is formatted= {:?}", &fms_str);
-    let mut echo_command = Command::new(&fms_str).spawn().expect("something went wrong trying to read the command");
+    let mut echo_command = Command::new(&fms_str)
+        .spawn()
+        .expect("something went wrong trying to read the command");
     let hello = echo_command.stdout;
 }
 
-pub fn widget_comparison(widget1: &gtk::Widget, widget2: &gtk::Widget) -> bool {
-    // wrapping widget1 and widget2 in Some() to match types
-    if let (Some(name1), Some(name2)) = (
-        Some(widget1.widget_name().to_string()), 
-        Some(widget2.widget_name().to_string())
+// this shouldn't be used!!!! but im stashing it c:
+pub fn hash_match_and_launch_app(
+    widget: gtk4::Widget, 
+    hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>) {
+     let query_child = &widget;
+     let hashed_child = hash.contains_key(query_child);
+     let captured_app = hash.get(query_child).unwrap();
+     let launch_app = gio::AppInfo::launch(
+         &captured_app, 
+         &[], 
+         gio::AppLaunchContext::NONE);
+}
+
+pub fn prepend_box_if_matches(
+    user_text: String, 
+    app_name: String,
+    rbox: &gtk::Box,
+    lbox: &gtk::ListBox
     ) {
-        return name1 == name2;
-    };
-    false
+    let app_label = gtk::Label::new(Some(&app_name));
+    if app_name.eq_ignore_ascii_case(&user_text) { 
+       rbox.prepend(&app_label);
+       lbox.prepend(rbox);
+    } 
 }

@@ -1,19 +1,64 @@
-## TODO! I need to upgrade to gtk4. ()COMPLETED !!!!!!!!
-   layer_shell is not properly working with gtk3.
-   But, gtk layer shell is not possible with gtk4. I need to figure out what to do fully.
-   See: https://github.com/wmww/gtk-layer-shell/issues/37
-2. The issue seems interesting. It's a problem with the Gtk surfaces attaches
-   to an xdg_surface, which is not good since i'm using wayland. I need to get
-   rid of this somehow
-3. Another option, still is to use the auto generated bindings this guy did for the gtk4, to support layer shell.
-wmww gtk4-layer-shell might be the go to.
+Regarding customization, I really don't know how I should approach the problem.
 
-## TRY TO FIGURE OUT HOW TO GET THE EXEC SPECS FOR EACH APP LAUNCHED
-I did it so that I'm just comparing the widget from the hashmap to the specific_row_child widget. Pretty easy, might get rid of my comparison function since it's pointless now lol.
+let's write some pseudo code:
 
-## Suggestions: 
-1. Use gtk's menu, and menu items. Ex: 
-https://github.com/gtk-rs/gtk3-rs/blob/master/examples/menu_bar/
+for app in app {
+    hash.set(list_box, appinfo)
 
-## Regarding customization, I really don't know how I should approach the problem.
+    // the whole logic for adding the UI elements will be moved
+}
+
+entry.connect_search_started(clone!(@weak => move|entry| {
+    // do the whole logic for adding UI elements HERE
+
+    let user_text = entry.text()
+    let app_string_captured = appinfo::name(&user_text)
+    let app_string = hash.get_value(&user_text) 
+    let result_box = gtk::Box::new(gtk::Orientation::horizontal, 20)
+
+    result_box.prepend(&app_string)
+    // this will make the relevant apps show up.
+
+    if user_text == app_string_captured {
+       result_box.prepend(&app_string_captured);
+    } else {
+        println!("nothing to show, nothing has been relevantly matched")
+    }
+        
+    // maybe use a loop to iterate through all apps?
+}))
+
+**** OUTLINE ****
+Pseudo code
+```
+fn run() {
+    set_up_window() // arbitrary code here for setting up window & layer
+    let list_box // declared
+    let parent_box // declared
+    for app in apps {
+        hash.insert(gtk::Box(app box technically), app.clone())
+    }
+    
+    let entry
+    entry.connect_search_changed(|list_box, entry|{
+        let EVC(move |list_box| {
+            let cloned_entry = entry.clone()
+            let app_name_hash
+            app in apps {
+                app_name_hash.insert(app_name, app.clone())
+            }
+            if app_name_hash.contains(entry.text().to_string()) {
+                
+                
+            }
+
+        })
+
+    })
+}
+
+fn main() {
+    run()
+} 
+```
 
