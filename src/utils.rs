@@ -49,16 +49,15 @@ pub fn hash_match_and_launch_app(
          gio::AppLaunchContext::NONE);
 }
 
-pub fn user_app_name_comparison(
+pub fn prepend_box_if_matches(
     user_text: String, 
     app_name: String,
     rbox: &gtk::Box,
     lbox: &gtk::ListBox
     ) {
     let app_label = gtk::Label::new(Some(&app_name));
-    if user_text == app_name { 
+    if app_name.eq_ignore_ascii_case(&user_text) { 
        rbox.prepend(&app_label);
-       rbox.grab_focus();
        lbox.prepend(rbox);
     } 
 }

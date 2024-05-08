@@ -4,8 +4,13 @@ use gtk::{
     gdk, gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
-use std::{cell::RefCell, collections::HashMap, rc::Rc};
-use crate::{actions::on_app_activate, utils::{hash_match_and_launch_app, user_app_name_comparison}};
+use std::{ascii::AsciiExt, cell::RefCell, collections::HashMap, rc::Rc};
+use crate::{actions::on_app_activate, 
+    utils::{
+        hash_match_and_launch_app, 
+        prepend_box_if_matches 
+    }
+};
 
 pub fn draw_ui(application: &Application) {
    
@@ -76,9 +81,7 @@ pub fn draw_ui(application: &Application) {
                 icon_box.append(&image_icon_setup);
                 list_box.append(&icon_box); */
             } 
-           } else {
-           println!("the app has no icon {:?}", &app.display_name());
-       }
+           }        
        let str_app_name = app.display_name().to_string();
 
        app_name_hash.insert(str_app_name.clone(), app.clone());
@@ -86,13 +89,7 @@ pub fn draw_ui(application: &Application) {
     }
    parent_box.prepend(&entry);
    
-   let entry_event_controller = gtk::EventControllerKey::new();
-   entry.add_controller(entry_event_controller);
-   // continue some search entry logic here
-    entry.connect_stop_search(|entry| {
-       println!("search has stopped: {}", entry.text());
-    });
-
+    // continue some search entry logic here
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
        println!("{}", entry.text());
        let relevant_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
@@ -101,22 +98,37 @@ pub fn draw_ui(application: &Application) {
        let apps = gio::AppInfo::all();
        for app in apps {
            let app_name = app.display_name().to_string();
-           user_app_name_comparison(user_text.clone(), app_name, &relevant_box, &list_box);
+           prepend_box_if_matches(user_text.clone(), app_name, &relevant_box, &list_box);
        }
    })); 
 
+   entry.connect_activate(clone!(@weak list_box => move |entry| {
+       println!("your value: {}", entry.text());
+       let user_string = entry.text().to_string();
+       let apps = gio::AppInfo::all();
+       for app in apps {
+           let app_name = app.display_name().to_string();
+           if app_name.eq_ignore_ascii_case(&user_string) {
+               let launch_command = gio::AppInfo::launch(
+                   &app, 
+                   &[], 
+                   gio::AppLaunchContext::NONE);
+           };
+
+       }
+   }));
+   entry.connect_stop_search(clone!(@weak list_box => move |entry|{
+       list_box.remove(&list_box)
+
+   }));
    scrolled_window.set_child(Some(&parent_box));
 
-   // THIS IS FOR THE KEY EVENTS
+   // THIS IS FOR THE KEY EVENTS 
+   // Do we even fucking need this??? 
+   // nope c:
    let event_controller = gtk::EventControllerKey::new();
 
    event_controller.connect_key_pressed(move |_, key, _, _| {
-      match key {
-          gdk::Key::Escape => { std::process::exit(0);
-          },
-          _ => ()
-      }
-
       if let Some(row) = list_box.selected_row() {
             if row.is_focusable() {
                 row.grab_focus();
@@ -130,15 +142,20 @@ pub fn draw_ui(application: &Application) {
                   } else {
                       println!("uh oh, theres no match from your query");
                   }
-                  std::process::exit(0); 
                },
                _ => (),
          }
       }
+
+      match key {
+          gdk::Key::Escape => std::process::exit(0),
+          _ => ()
+      }
+
       glib::Propagation::Proceed
    });
 
-   draw_window.add_controller(event_controller);
+   //draw_window.add_controller(event_controller);
 
    on_app_activate(&application);
    draw_window.set_child(Some(&scrolled_window));
