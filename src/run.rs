@@ -8,7 +8,7 @@ use std::{ascii::AsciiExt, cell::RefCell, collections::HashMap, rc::Rc};
 use crate::{actions::on_app_activate, 
     utils::{
         hash_match_and_launch_app, 
-        prepend_box_if_matches 
+        prepend_box_if_matches,
     }
 };
 
@@ -112,6 +112,7 @@ pub fn draw_ui(application: &Application) {
                    &app, 
                    &[], 
                    gio::AppLaunchContext::NONE);
+               // if launch command then process::exit(0);
            };
 
        }
