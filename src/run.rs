@@ -112,7 +112,7 @@ pub fn draw_ui(application: &Application) {
                    &app, 
                    &[], 
                    gio::AppLaunchContext::NONE);
-               // if launch command then process::exit(0);
+               std::process::exit(0);
            };
 
        }
