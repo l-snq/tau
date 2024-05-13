@@ -3,6 +3,7 @@ use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
 use gtk::{gio, Image, IconLookupFlags, IconTheme, Box, TextDirection};
 use std::process::Command;
+use regex::Regex;
 #[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
@@ -50,6 +51,7 @@ pub fn hash_match_and_launch_app(
          gio::AppLaunchContext::NONE);
 }
 
+// fix this, this isn't working all the time
 pub fn prepend_box_if_matches(
     user_text: String, 
     app_name: String,
@@ -57,9 +59,15 @@ pub fn prepend_box_if_matches(
     lbox: &gtk::ListBox
     ) {
     let app_label = gtk::Label::new(Some(&app_name));
-    if app_name.eq_ignore_ascii_case(&user_text) { 
-       rbox.prepend(&app_label);
-       lbox.prepend(rbox);
-    } 
+    // don't be scared, this is regex.
+    // It looks for any matching characters 
+    // between user_text and app_name
+    let pattern = Regex::new(r"/\D/gm").unwrap(); 
+    for item in pattern.find_iter(&user_text) {
+        println!("YOU GOT A MATCH ***********{}", &app_name);
+        rbox.prepend(&app_label);
+        lbox.prepend(rbox);
+    }
+
 }
 

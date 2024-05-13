@@ -97,7 +97,12 @@ pub fn draw_ui(application: &Application) {
        let apps = gio::AppInfo::all();
        for app in apps {
            let app_name = app.display_name().to_string();
-           prepend_box_if_matches(user_text.clone(), app_name, &relevant_box, &list_box);
+           prepend_box_if_matches(
+               user_text.clone(), 
+               app_name, 
+               &relevant_box, 
+               &list_box
+           );
        }
    })); 
 
@@ -118,7 +123,7 @@ pub fn draw_ui(application: &Application) {
        }
    }));
    entry.connect_stop_search(clone!(@weak list_box => move |entry|{
-       list_box.remove(&list_box)
+       //list_box.remove(&relevant_box);
 
    }));
    scrolled_window.set_child(Some(&parent_box));

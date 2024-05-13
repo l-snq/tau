@@ -10,6 +10,7 @@ gio = "0.17.10"
 glib = "0.17.10"
 gtk4 = "0.7.3"
 gtk4-layer-shell = "0.2.0"
+regex = "1.10.4"
 winit = "0.28.6"
 xdg = "2.5.0"
 
