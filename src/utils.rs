@@ -59,10 +59,9 @@ pub fn prepend_box_if_matches(
     lbox: &gtk::ListBox
     ) {
     let app_label = gtk::Label::new(Some(&app_name));
-    // don't be scared, this is regex.
-    // It looks for any matching characters 
+    // this looks for any matching characters 
     // between user_text and app_name
-    let pattern = Regex::new(r"/\D/gm").unwrap(); 
+    let pattern = Regex::new(r"/\D\s\S/gm").unwrap(); 
     for item in pattern.find_iter(&user_text) {
         println!("YOU GOT A MATCH ***********{}", &app_name);
         rbox.prepend(&app_label);
