@@ -48,6 +48,7 @@ pub fn draw_ui(application: &Application) {
    let entry = SearchEntry::new();
    entry.set_hexpand(true);
    entry.set_widget_name("entry");
+   entry.set_key_capture_widget(Some(&list_box));
    bar.connect_entry(&entry);
    bar.set_key_capture_widget(Some(&entry));
 

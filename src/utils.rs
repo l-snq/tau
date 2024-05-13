@@ -62,12 +62,8 @@ pub fn prepend_box_if_matches(
     // don't be scared, this is regex.
     // It looks for any matching characters 
     // between user_text and app_name
-    let pattern = Regex::new(r"/\D/gm").unwrap(); 
-    for item in pattern.find_iter(&user_text) {
-        println!("YOU GOT A MATCH ***********{}", &app_name);
-        rbox.prepend(&app_label);
-        lbox.prepend(rbox);
-    }
+    let pattern = Regex::new(r"/\D\s\S/gm").unwrap(); 
+    let app_pattern = Regex::new(&app_name);
 
 }
 
