@@ -7,7 +7,7 @@ use gtk::{
 use std::{ascii::AsciiExt, cell::RefCell, collections::HashMap, rc::Rc};
 use crate::{actions::on_app_activate, 
     utils::{
-        AppField,
+        //AppField,
         hash_match_and_launch_app, 
         prepend_box_if_matches,
     }
@@ -62,14 +62,14 @@ pub fn draw_ui(application: &Application) {
    for app in apps {
 
        let app_name = app.display_name().to_string();
-       let app_exec = app.executable();
-       let app_id = app.id();
-       let contained_app = AppField {
+       let app_exec = app.executable(); // this is your issue. Why?
+       let app_id = app.id().unwrap().to_string();
+/*       let contained_app = AppField {
            app_name: app_name.clone(),
            exec: app_exec,
            id: app_id, 
        };
-       println!("{:?}",contained_app.update_fields());
+       contained_app.update_fields(); */
 
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        icon_box.grab_focus();

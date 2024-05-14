@@ -1,29 +1,31 @@
 use uuid::Uuid;
 use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
-use gtk::{gio, glib::GString, Image, IconLookupFlags, IconTheme, Box, TextDirection};
+use gio::AppInfo;
+use gtk::{glib::{GString}, Image, IconLookupFlags, IconTheme, Box, TextDirection};
 use std::{process::Command, path::PathBuf};
 use regex::Regex;
-#[derive(Debug, Clone)]
+ #[derive(Debug, Clone)]
+
 pub struct AppField {
     pub app_name: String,
-    pub exec: PathBuf,
-    pub id: Option<gtk::glib::GString>,
+    pub exec: AppInfo::executable(),
+    pub id: String,
 }
 
 impl AppField {
     pub fn new() -> Self {
         Self {
             app_name: String::new(),
-            exec: PathBuf::new(),
-            id: Some(GString::new()),
+            exec: gio::AppInfo::executable(),
+            id: String::new(),
         }
     }
 
     pub fn update_fields(&self) {
-        self.app_name.clone();
-        self.exec.clone();
-        self.id.clone();
+        let _ = self.app_name.clone();
+        let _ = self.exec.clone();
+        let _ = self.id.clone();
     }
 }
 
