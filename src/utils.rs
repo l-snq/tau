@@ -1,29 +1,29 @@
 use uuid::Uuid;
 use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
-use gtk::{gio, Image, IconLookupFlags, IconTheme, Box, TextDirection};
-use std::process::Command;
+use gtk::{gio, glib::GString, Image, IconLookupFlags, IconTheme, Box, TextDirection};
+use std::{process::Command, path::PathBuf};
 use regex::Regex;
 #[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
-    pub exec: String,
-    pub id: Uuid,
+    pub exec: PathBuf,
+    pub id: Option<gtk::glib::GString>,
 }
 
 impl AppField {
     pub fn new() -> Self {
         Self {
             app_name: String::new(),
-            exec: String::new(),
-            id: Uuid::new_v4(),
+            exec: PathBuf::new(),
+            id: Some(GString::new()),
         }
     }
 
-    pub fn update_fields(&mut self, app_name: String, exec: String) {
-        self.app_name = app_name;
-        self.exec = exec;
-        self.id = Uuid::new_v4();
+    pub fn update_fields(&self) {
+        self.app_name.clone();
+        self.exec.clone();
+        self.id.clone();
     }
 }
 
@@ -54,15 +54,18 @@ pub fn hash_match_and_launch_app(
 // fix this, this isn't working all the time
 pub fn prepend_box_if_matches(
     user_text: String, 
-    app_name: String,
+    haystack: String,
     rbox: &gtk::Box,
     lbox: &gtk::ListBox
     ) {
-    let app_label = gtk::Label::new(Some(&app_name));
+    let app_label = gtk::Label::new(Some(&haystack));
     // this looks for any matching characters 
     // between user_text and app_name
     let pattern = Regex::new(r"/\D\s\S/gm").unwrap(); 
-    let app_pattern = Regex::new(&app_name);
+
+    if let Some(matched_characters) = pattern.find(&haystack) {
+        println!("*********************** {:?}", &matched_characters);
+    }
 
 }
 

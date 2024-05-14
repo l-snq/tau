@@ -7,6 +7,7 @@ use gtk::{
 use std::{ascii::AsciiExt, cell::RefCell, collections::HashMap, rc::Rc};
 use crate::{actions::on_app_activate, 
     utils::{
+        AppField,
         hash_match_and_launch_app, 
         prepend_box_if_matches,
     }
@@ -50,6 +51,7 @@ pub fn draw_ui(application: &Application) {
    entry.set_widget_name("entry");
    entry.set_key_capture_widget(Some(&list_box));
    bar.connect_entry(&entry);
+   bar.set_search_mode(true);
    bar.set_key_capture_widget(Some(&entry));
 
    let icon_theme = IconTheme::default();
@@ -58,14 +60,25 @@ pub fn draw_ui(application: &Application) {
    parent_box.append(&list_box);
 
    for app in apps {
-       let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+
        let app_name = app.display_name().to_string();
+       let app_exec = app.executable();
+       let app_id = app.id();
+       let contained_app = AppField {
+           app_name: app_name.clone(),
+           exec: app_exec,
+           id: app_id, 
+       };
+       println!("{:?}",contained_app.update_fields());
+
+       let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        icon_box.grab_focus();
        icon_box.set_widget_name(&app_name);
        let image_icon_setup = Image::builder()
             .pixel_size(50)
             .build();
        let title = gtk::Label::new(Some(&app_name));
+
 
        if let Some(gtk_icon_name) = app.icon() {
             let some_icon_theme = Some(icon_theme.lookup_by_gicon(
@@ -91,7 +104,6 @@ pub fn draw_ui(application: &Application) {
    
     // continue some search entry logic here
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
-       println!("{}", entry.text());
        let relevant_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        relevant_box.set_focusable(true);
        let user_text = entry.text().to_string();
