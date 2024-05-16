@@ -2,12 +2,13 @@ use uuid::Uuid;
 use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
 use gtk::{gio, glib::{GString}, Image, IconLookupFlags, IconTheme, Box, TextDirection};
-use std::{process::Command, path::PathBuf};
+use std::{iter, process::Command, path::PathBuf};
 use regex::Regex;
  #[derive(Debug, Clone)]
 
 pub struct AppField {
     pub app_name: String,
+    //pub app_info: gio::AppInfo,
     pub id: String,
 }
 
@@ -15,12 +16,14 @@ impl AppField {
     pub fn new() -> Self {
         Self {
             app_name: String::new(),
+            // app_info: gio::AppInfo,
             id: String::new(),
         }
     }
 
     pub fn update_fields(&self) {
         let _ = self.app_name.clone();
+        // let _ = self.app_info.clone();
         let _ = self.id.clone();
     }
 }
@@ -67,3 +70,6 @@ pub fn prepend_box_if_matches(
 
 }
 
+pub fn naive_string_matcher(t: String, p: String) {
+    // look at using the smith waterman algorithm
+}

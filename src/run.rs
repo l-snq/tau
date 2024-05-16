@@ -1,7 +1,7 @@
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gdk, gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
+    gdk, gio::{self, AppInfo}, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::{ascii::AsciiExt, cell::RefCell, collections::HashMap, rc::Rc};
@@ -9,7 +9,7 @@ use crate::{actions::on_app_activate,
     utils::{
         AppField,
         hash_match_and_launch_app, 
-        prepend_box_if_matches,
+        naive_string_matcher
     }
 };
 
@@ -59,17 +59,10 @@ pub fn draw_ui(application: &Application) {
    let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
    parent_box.append(&list_box);
 
-   for app in apps {
+   let mut app_info_vec: Vec<String> = Vec::new(); // stores the names of each app in a vector
 
+   for app in apps {
        let app_name = app.display_name().to_string();
-       // let app_exec = app.executable(); // this is your issue. Why?
-       let app_id = app.id().unwrap().to_string();
-       let contained_app = AppField {
-           app_name: app_name.clone(),
-           id: app_id, 
-       };
-       contained_app.update_fields(); 
-       println!("{:?}", contained_app);
 
        let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        icon_box.grab_focus();
@@ -99,7 +92,21 @@ pub fn draw_ui(application: &Application) {
 
        app_name_hash.insert(str_app_name.clone(), app.clone());
        hash.insert(icon_box.clone(), app.clone()); 
+       // let app_exec = app.executable(); // this is your issue. Why?
+       let app_id = app.id().unwrap().to_string();
+       let contained_app = AppField {
+           app_name: app_name.clone(),
+           // app_info: app,
+           id: app_id, 
+       };
+
+       contained_app.update_fields(); 
+       println!("{:?}", contained_app);
+
+       let van = app.display_name().to_string();
+       app_info_vec.push(van);
     }
+   println!("(((()))){:?}", app_info_vec);
    parent_box.prepend(&entry);
    
     // continue some search entry logic here
@@ -110,12 +117,13 @@ pub fn draw_ui(application: &Application) {
        let apps = gio::AppInfo::all();
        for app in apps {
            let app_name = app.display_name().to_string();
-           prepend_box_if_matches(
-               user_text.clone(), 
+           /* prepend_box_if_matches(
+               user_text.clone(), // this clone() is fucking you up lmao
                app_name, 
                &relevant_box, 
                &list_box
-           );
+           ); */
+           naive_string_matcher(user_text.clone(), app_name);
        }
    })); 
 
