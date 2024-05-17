@@ -1,7 +1,9 @@
+use fuzzy_matcher::FuzzyMatcher;
+use fuzzy_matcher::skim::SkimMatcherV2;
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gdk, gio::{self, AppInfo}, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
+    gdk, gio::{self, AppInfo}, glib::{self, clone, PropertyGet}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::{ascii::AsciiExt, cell::RefCell, collections::HashMap, rc::Rc};
@@ -9,7 +11,6 @@ use crate::{actions::on_app_activate,
     utils::{
         AppField,
         hash_match_and_launch_app, 
-        naive_string_matcher
     }
 };
 
@@ -38,7 +39,6 @@ pub fn draw_ui(application: &Application) {
         .build();
 
    let mut hash = HashMap::new();
-   let mut app_name_hash = HashMap::new();
 
    let apps = gio::AppInfo::all(); 
 
@@ -90,23 +90,20 @@ pub fn draw_ui(application: &Application) {
            }        
        let str_app_name = app.display_name().to_string();
 
-       app_name_hash.insert(str_app_name.clone(), app.clone());
        hash.insert(icon_box.clone(), app.clone()); 
-       // let app_exec = app.executable(); // this is your issue. Why?
+
        let app_id = app.id().unwrap().to_string();
        let contained_app = AppField {
            app_name: app_name.clone(),
-           // app_info: app,
-           id: app_id, 
+           app_info: Some(app.clone()),
+           id: Some(app_id), 
        };
 
        contained_app.update_fields(); 
-       println!("{:?}", contained_app);
 
        let van = app.display_name().to_string();
        app_info_vec.push(van);
     }
-   println!("(((()))){:?}", app_info_vec);
    parent_box.prepend(&entry);
    
     // continue some search entry logic here
@@ -115,15 +112,26 @@ pub fn draw_ui(application: &Application) {
        relevant_box.set_focusable(true);
        let user_text = entry.text().to_string();
        let apps = gio::AppInfo::all();
+       let mut vec: Vec<String> = Vec::new();
        for app in apps {
            let app_name = app.display_name().to_string();
-           /* prepend_box_if_matches(
-               user_text.clone(), // this clone() is fucking you up lmao
-               app_name, 
-               &relevant_box, 
-               &list_box
-           ); */
-           naive_string_matcher(user_text.clone(), app_name);
+           let app_id = app
+               .id()
+               .unwrap()
+               .to_string();
+           let matcher = SkimMatcherV2::default();
+           let contained_app = AppField {
+               app_name,
+               app_info: Some(app),
+               id: Some(app_id),
+           };
+           if matcher.fuzzy_match(
+               contained_app.app_name.as_str(), 
+               user_text.clone().as_str()
+           ).is_some() {
+               let app_label = gtk::Label::new(Some(&contained_app.app_name));
+               list_box.prepend(&app_label);
+           }
        }
    })); 
 
@@ -133,13 +141,24 @@ pub fn draw_ui(application: &Application) {
        let apps = gio::AppInfo::all();
        for app in apps {
            let app_name = app.display_name().to_string();
-           if app_name.eq_ignore_ascii_case(&user_string) {
+           let app_id = app.id().unwrap().to_string();
+           let app_struct = AppField {
+               app_name,
+               app_info: Some(app.clone()),
+               id: Some(app_id),
+           };
+           let matcher = SkimMatcherV2::default();
+           if matcher.fuzzy_match(app_struct.app_name.as_str(), user_string.clone().as_str()).is_some() {
                let launch_command = gio::AppInfo::launch(
                    &app, 
                    &[], 
                    gio::AppLaunchContext::NONE);
                std::process::exit(0);
-           };
+           } else {
+               let e_label = gtk::Label::new(Some("App not found!"));
+               list_box.prepend(&e_label);
+               break
+           }
 
        }
    }));
