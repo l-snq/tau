@@ -122,7 +122,7 @@ pub fn draw_ui(application: &Application) {
                .to_lowercase();
            let app_title = app
                .display_name()
-               .to_string();
+               .to_string(); // adding this so the titles when rendered aren't all in lowercase
            let app_id = app
                .id()
                .unwrap()
