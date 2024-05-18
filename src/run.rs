@@ -6,7 +6,7 @@ use gtk::{
     gdk, gio::{self, AppInfo}, glib::{self, clone, PropertyGet}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
-use std::{ascii::AsciiExt, cell::RefCell, collections::HashMap, rc::Rc};
+use std::{collections::HashMap};
 use crate::{actions::on_app_activate, 
     utils::{
         AppField,
@@ -110,11 +110,19 @@ pub fn draw_ui(application: &Application) {
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
        let relevant_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
        relevant_box.set_focusable(true);
-       let user_text = entry.text().to_string();
+       let user_text = entry
+           .text()
+           .to_string()
+           .to_lowercase();
        let apps = gio::AppInfo::all();
-       let mut vec: Vec<String> = Vec::new();
        for app in apps {
-           let app_name = app.display_name().to_string();
+           let app_name = app
+               .display_name()
+               .to_string()
+               .to_lowercase();
+           let app_title = app
+               .display_name()
+               .to_string();
            let app_id = app
                .id()
                .unwrap()
@@ -125,13 +133,15 @@ pub fn draw_ui(application: &Application) {
                app_info: Some(app),
                id: Some(app_id),
            };
+
            if matcher.fuzzy_match(
                contained_app.app_name.as_str(), 
                user_text.clone().as_str()
            ).is_some() {
-               let app_label = gtk::Label::new(Some(&contained_app.app_name));
+               let app_label = gtk::Label::new(Some(&app_title));
                list_box.prepend(&app_label);
            }
+
        }
    })); 
 
@@ -154,12 +164,7 @@ pub fn draw_ui(application: &Application) {
                    &[], 
                    gio::AppLaunchContext::NONE);
                std::process::exit(0);
-           } else {
-               let e_label = gtk::Label::new(Some("App not found!"));
-               list_box.prepend(&e_label);
-               break
-           }
-
+           } 
        }
    }));
    entry.connect_stop_search(clone!(@weak list_box => move |entry|{
