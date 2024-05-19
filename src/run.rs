@@ -85,9 +85,7 @@ pub fn draw_ui(application: &Application) {
 
             if some_icon_theme.is_some() {
                 image_icon_setup.set_from_gicon(&gtk_icon_name);
-                /* icon_box.prepend(&title);
-                icon_box.append(&image_icon_setup);
-                list_box.append(&icon_box); */
+                // move this into entry.search_changed ?
             } 
            }        
        let str_app_name = app.display_name().to_string();
