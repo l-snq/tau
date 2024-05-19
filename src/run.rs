@@ -49,7 +49,9 @@ pub fn draw_ui(application: &Application) {
    let entry = SearchEntry::new();
    entry.set_hexpand(true);
    entry.set_widget_name("entry");
+   entry.set_placeholder_text(Some("Start typing something..."));
    entry.set_key_capture_widget(Some(&list_box));
+
    bar.connect_entry(&entry);
    bar.set_search_mode(true);
    bar.set_key_capture_widget(Some(&entry));
@@ -132,14 +134,16 @@ pub fn draw_ui(application: &Application) {
                app_name,
                app_info: Some(app),
                id: Some(app_id),
-           };
+           }; // i know this is ugly as shit. deal with it later
 
            if matcher.fuzzy_match(
                contained_app.app_name.as_str(), 
                user_text.clone().as_str()
            ).is_some() {
                let app_label = gtk::Label::new(Some(&app_title));
-               list_box.prepend(&app_label);
+               let app_box = gtk::ListBoxRow::new();
+               app_box.set_child(Some(&app_label));
+               list_box.prepend(&app_box);
            }
 
        }
