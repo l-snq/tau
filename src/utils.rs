@@ -43,32 +43,10 @@ pub fn hash_match_and_launch_app(
     widget: gtk4::Widget, 
     hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>) {
      let query_child = &widget;
-     let hashed_child = hash.contains_key(query_child);
+     let _hashed_child = hash.contains_key(query_child);
      let captured_app = hash.get(query_child).unwrap();
-     let launch_app = gio::AppInfo::launch(
+     let _launch_app = gio::AppInfo::launch(
          &captured_app, 
          &[], 
          gio::AppLaunchContext::NONE);
-}
-
-// fix this, this isn't working all the time
-pub fn prepend_box_if_matches(
-    user_text: String, 
-    haystack: String,
-    rbox: &gtk::Box,
-    lbox: &gtk::ListBox
-    ) {
-    let app_label = gtk::Label::new(Some(&haystack));
-    // this looks for any matching characters 
-    // between user_text and app_name
-    let pattern = Regex::new(r"/\D\s\S/gm").unwrap(); 
-
-    if let Some(matched_characters) = pattern.find(&haystack) {
-        println!("*********************** {:?}", &matched_characters);
-    }
-
-}
-
-pub fn naive_string_matcher(t: String, p: String) {
-    // look at using the smith waterman algorithm
 }

@@ -177,42 +177,6 @@ pub fn draw_ui(application: &Application) {
    }));
    scrolled_window.set_child(Some(&parent_box));
 
-   // THIS IS FOR THE KEY EVENTS 
-   // Do we even fucking need this??? 
-   // nope c:
-
-   // DELETE THIS FUCKING CODE IT DOESN'T WORK
-   let event_controller = gtk::EventControllerKey::new();
-
-   event_controller.connect_key_pressed(move |_, key, _, _| {
-      if let Some(row) = list_box.selected_row() {
-            if row.is_focusable() {
-                row.grab_focus();
-            }
-            match key {
-               gdk::Key::Return if row.has_focus() => {
-                  // specify if the row is the search bar, 
-                  // and if it is, set the search mode on?
-                  if let Some(specific_row_child) = row.child() {
-                     hash_match_and_launch_app(specific_row_child, &hash);
-                  } else {
-                      println!("uh oh, theres no match from your query");
-                  }
-               },
-               _ => (),
-         }
-      }
-
-      match key {
-          gdk::Key::Escape => std::process::exit(0),
-          _ => ()
-      }
-
-      glib::Propagation::Proceed
-   });
-
-   //draw_window.add_controller(event_controller);
-
    on_app_activate(&application);
    draw_window.set_child(Some(&scrolled_window));
    draw_window.set_size_request(100, 400);
