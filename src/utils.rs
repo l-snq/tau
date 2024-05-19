@@ -1,28 +1,29 @@
-use uuid::Uuid;
 use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
-use gtk::{gio, Image, IconLookupFlags, IconTheme, Box, TextDirection};
-use std::process::Command;
-#[derive(Debug, Clone)]
+use gtk::{gio, glib::{GString}, Image, IconLookupFlags, IconTheme, Box, TextDirection};
+use std::{iter, process::Command, path::PathBuf};
+use regex::Regex;
+ #[derive(Debug, Clone)]
+
 pub struct AppField {
     pub app_name: String,
-    pub exec: String,
-    pub id: Uuid,
+    pub app_info: Option<gio::AppInfo>,
+    pub id: Option<String>,
 }
 
 impl AppField {
-    pub fn new() -> Self {
+    pub fn new(info: gio::AppInfo) -> Self {
         Self {
             app_name: String::new(),
-            exec: String::new(),
-            id: Uuid::new_v4(),
+            app_info: Some(info),
+            id: Some(String::new()),
         }
     }
 
-    pub fn update_fields(&mut self, app_name: String, exec: String) {
-        self.app_name = app_name;
-        self.exec = exec;
-        self.id = Uuid::new_v4();
+    pub fn update_fields(&self) {
+        let _ = self.app_name.clone();
+        let _ = self.app_info.clone();
+        let _ = self.id.clone();
     }
 }
 
@@ -50,16 +51,24 @@ pub fn hash_match_and_launch_app(
          gio::AppLaunchContext::NONE);
 }
 
+// fix this, this isn't working all the time
 pub fn prepend_box_if_matches(
     user_text: String, 
-    app_name: String,
+    haystack: String,
     rbox: &gtk::Box,
     lbox: &gtk::ListBox
     ) {
-    let app_label = gtk::Label::new(Some(&app_name));
-    if app_name.eq_ignore_ascii_case(&user_text) { 
-       rbox.prepend(&app_label);
-       lbox.prepend(rbox);
-    } 
+    let app_label = gtk::Label::new(Some(&haystack));
+    // this looks for any matching characters 
+    // between user_text and app_name
+    let pattern = Regex::new(r"/\D\s\S/gm").unwrap(); 
+
+    if let Some(matched_characters) = pattern.find(&haystack) {
+        println!("*********************** {:?}", &matched_characters);
+    }
+
 }
 
+pub fn naive_string_matcher(t: String, p: String) {
+    // look at using the smith waterman algorithm
+}
