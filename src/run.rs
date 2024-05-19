@@ -61,7 +61,7 @@ pub fn draw_ui(application: &Application) {
    let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
    parent_box.append(&list_box);
 
-   let mut app_info_vec: Vec<String> = Vec::new(); // stores the names of each app in a vector
+   let app_map: HashMap<&AppInfo, String> = HashMap::new(); 
 
    for app in apps {
        let app_name = app.display_name().to_string();
@@ -102,9 +102,6 @@ pub fn draw_ui(application: &Application) {
        };
 
        contained_app.update_fields(); 
-
-       let van = app.display_name().to_string();
-       app_info_vec.push(van);
     }
    parent_box.prepend(&entry);
    
