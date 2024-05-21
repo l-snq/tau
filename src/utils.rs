@@ -1,6 +1,7 @@
 use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
 use gtk4 as gtk;
 use gtk::{gio, glib::{GString}, Image, IconLookupFlags, IconTheme, Box, TextDirection};
+use std::collections::hash_set;
 use std::{iter, process::Command, path::PathBuf};
 use regex::Regex;
  #[derive(Debug, Clone)]
@@ -49,4 +50,17 @@ pub fn hash_match_and_launch_app(
          &captured_app, 
          &[], 
          gio::AppLaunchContext::NONE);
+}
+
+pub fn add_row(
+    lbrow: &gtk::ListBoxRow, 
+    label: &gtk::Label, 
+    set: std::collections::HashSet<&gtk::Label>
+    ) {
+    if set.contains(&label) {
+        println!("error, this label already exists");
+    } else {
+        set.insert(&label);
+    }
+
 }

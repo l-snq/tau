@@ -6,11 +6,10 @@ use gtk::{
     gdk, gio::{self, AppInfo}, glib::{self, clone, PropertyGet}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
-use std::{collections::HashMap};
+use std::collections::{HashMap, HashSet};
 use crate::{actions::on_app_activate, 
     utils::{
-        AppField,
-        hash_match_and_launch_app, 
+        add_row, hash_match_and_launch_app, AppField 
     }
 };
 
@@ -61,8 +60,6 @@ pub fn draw_ui(application: &Application) {
    let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
    parent_box.append(&list_box);
 
-   let app_map: HashMap<&AppInfo, String> = HashMap::new(); 
-
    for app in apps {
        let app_name = app.display_name().to_string();
 
@@ -81,14 +78,14 @@ pub fn draw_ui(application: &Application) {
                     16, 
                     16, 
                     TextDirection::None, 
-                    IconLookupFlags::FORCE_REGULAR));
+                    IconLookupFlags::FORCE_REGULAR)
+            );
 
             if some_icon_theme.is_some() {
                 image_icon_setup.set_from_gicon(&gtk_icon_name);
                 // move this into entry.search_changed ?
             } 
-           }        
-       let str_app_name = app.display_name().to_string();
+       }        
 
        hash.insert(icon_box.clone(), app.clone()); 
 
@@ -113,6 +110,7 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        let apps = gio::AppInfo::all();
        for app in apps {
+           let hash_set: HashSet<&gtk::Label> = HashSet::new();
            let app_name = app
                .display_name()
                .to_string()
@@ -135,10 +133,10 @@ pub fn draw_ui(application: &Application) {
                contained_app.app_name.as_str(), 
                user_text.clone().as_str()
            ).is_some() {
-               let app_label = gtk::Label::new(Some(&app_title));
                let app_box = gtk::ListBoxRow::new();
-               app_box.set_child(Some(&app_label));
+               let app_label = gtk::Label::new(Some(&app_title));
                list_box.prepend(&app_box);
+               add_row(&app_box, &app_label, hash_set);
            }
 
        }
