@@ -1,9 +1,7 @@
-use gtk4::prelude::{AppInfoExt, WidgetExt, BoxExt};
+use gtk4::prelude::AppInfoExt;
 use gtk4 as gtk;
-use gtk::{gio, glib::{GString}, Image, IconLookupFlags, IconTheme, Box, TextDirection};
-use std::collections::hash_set;
-use std::{iter, process::Command, path::PathBuf};
-use regex::Regex;
+use gtk::gio;
+use std::process::Command;
  #[derive(Debug, Clone)]
 
 pub struct AppField {
@@ -33,7 +31,7 @@ pub fn string_to_command(input: &str) {
     let fms_str = &input.trim().to_lowercase();
 
     println!("the string that is formatted= {:?}", &fms_str);
-    let mut echo_command = Command::new(&fms_str)
+    let echo_command = Command::new(&fms_str)
         .spawn()
         .expect("something went wrong trying to read the command");
     let hello = echo_command.stdout;
@@ -50,17 +48,4 @@ pub fn hash_match_and_launch_app(
          &captured_app, 
          &[], 
          gio::AppLaunchContext::NONE);
-}
-
-pub fn add_row(
-    lbrow: &gtk::ListBoxRow, 
-    label: &gtk::Label, 
-    set: std::collections::HashSet<&gtk::Label>
-    ) {
-    if set.contains(&label) {
-        println!("error, this label already exists");
-    } else {
-        set.insert(&label);
-    }
-
 }

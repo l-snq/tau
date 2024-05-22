@@ -3,15 +3,11 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gdk, gio::{self, AppInfo}, glib::{self, clone, PropertyGet}, prelude::*, Application, ApplicationWindow, 
+    gio::{self}, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
     IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::{HashMap, HashSet};
-use crate::{actions::on_app_activate, 
-    utils::{
-        add_row, hash_match_and_launch_app, AppField 
-    }
-};
+use crate::{actions::on_app_activate, utils::AppField};
 
 pub fn draw_ui(application: &Application) {
    
@@ -71,6 +67,11 @@ pub fn draw_ui(application: &Application) {
             .build();
        let title = gtk::Label::new(Some(&app_name));
 
+       // rendering out all the results in appInfo
+       let lbr = gtk::ListBoxRow::new();
+       let lbr_label = gtk::Label::new(Some(&app_name));
+       lbr.set_child(Some(&lbr_label));
+       list_box.append(&lbr);
 
        if let Some(gtk_icon_name) = app.icon() {
             let some_icon_theme = Some(icon_theme.lookup_by_gicon(
@@ -133,10 +134,7 @@ pub fn draw_ui(application: &Application) {
                contained_app.app_name.as_str(), 
                user_text.clone().as_str()
            ).is_some() {
-               let app_box = gtk::ListBoxRow::new();
-               let app_label = gtk::Label::new(Some(&app_title));
-               list_box.prepend(&app_box);
-               add_row(&app_box, &app_label, hash_set);
+               //add_row(&app_box, &app_label, hash_set);
            }
 
        }
