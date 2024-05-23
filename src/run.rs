@@ -3,8 +3,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    gio::{self}, glib::{self, clone}, prelude::*, Application, ApplicationWindow, 
-    IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
+    ffi::GtkWidget, gio, glib::{self, clone, PropertyGet}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::{HashMap, HashSet};
 use crate::{actions::on_app_activate, utils::AppField};
@@ -24,10 +23,7 @@ pub fn draw_ui(application: &Application) {
    LayerShell::set_keyboard_mode(&draw_window, KeyboardMode::OnDemand);
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
-   let list_box = gtk::ListBox::builder()
-           .name("who up listin they box rn")
-           .build();
-
+   let list_box = gtk::ListBox::new();
    let scrolled_window = gtk::ScrolledWindow::builder()
         .name("scrollable window")
         .hscrollbar_policy(gtk::PolicyType::Never)
@@ -135,8 +131,8 @@ pub fn draw_ui(application: &Application) {
                user_text.clone().as_str()
            ).is_some() {
                //add_row(&app_box, &app_label, hash_set);
+               list_box.remove_all();
            }
-
        }
    })); 
 

@@ -49,3 +49,4 @@ pub fn hash_match_and_launch_app(
          &[], 
          gio::AppLaunchContext::NONE);
 }
+
