@@ -1,7 +1,7 @@
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
-use gtk::{
+use gtk4::{
     gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::{HashMap, HashSet};
@@ -22,10 +22,10 @@ pub fn draw_ui(application: &Application) {
    LayerShell::set_keyboard_mode(&draw_window, KeyboardMode::OnDemand);
    LayerShell::auto_exclusive_zone_enable(&draw_window);
 
-   let list_box = gtk::ListBox::new();
-   let scrolled_window = gtk::ScrolledWindow::builder()
+   let list_box = gtk4::ListBox::new();
+   let scrolled_window = gtk4::ScrolledWindow::builder()
         .name("scrollable window")
-        .hscrollbar_policy(gtk::PolicyType::Never)
+        .hscrollbar_policy(gtk4::PolicyType::Never)
         .build();
 
    let mut hash = HashMap::new();
@@ -33,7 +33,7 @@ pub fn draw_ui(application: &Application) {
    let apps = gio::AppInfo::all(); 
 
    let bar = SearchBar::builder()
-       .valign(gtk::Align::Start)
+       .valign(gtk4::Align::Start)
        .show_close_button(true)
        .build();
    let entry = SearchEntry::new();
@@ -48,23 +48,23 @@ pub fn draw_ui(application: &Application) {
 
    let icon_theme = IconTheme::default();
 
-   let parent_box = gtk::Box::new(gtk::Orientation::Vertical, 20);
+   let parent_box = gtk4::Box::new(gtk4::Orientation::Vertical, 20);
    parent_box.append(&list_box);
 
    for app in apps {
        let app_name = app.display_name().to_string();
 
-       let icon_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+       let icon_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
        icon_box.grab_focus();
        icon_box.set_widget_name(&app_name);
        let image_icon_setup = Image::builder()
             .pixel_size(50)
             .build();
-       let title = gtk::Label::new(Some(&app_name));
+       let title = gtk4::Label::new(Some(&app_name));
 
        // rendering out all the results in appInfo
-       let lbr = gtk::ListBoxRow::new();
-       let lbr_label = gtk::Label::new(Some(&app_name));
+       let lbr = gtk4::ListBoxRow::new();
+       let lbr_label = gtk4::Label::new(Some(&app_name));
        lbr.set_child(Some(&lbr_label));
        list_box.append(&lbr);
 
@@ -98,7 +98,7 @@ pub fn draw_ui(application: &Application) {
    
     // continue some search entry logic here
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
-       let relevant_box = gtk::Box::new(gtk::Orientation::Horizontal, 20);
+       let relevant_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
        relevant_box.set_focusable(true);
        let user_text = entry
            .text()
@@ -106,7 +106,7 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        let apps = gio::AppInfo::all();
        for app in apps {
-           let hash_set: HashSet<&gtk::Label> = HashSet::new();
+           let hash_set: HashSet<&gtk4::Label> = HashSet::new();
            let app_name = app
                .display_name()
                .to_string()
@@ -130,6 +130,10 @@ pub fn draw_ui(application: &Application) {
                user_text.clone().as_str()
            ).is_some() {
                list_box.remove_all();
+               let lbr = gtk4::ListBoxRow::new();
+               let lbrl = gtk4::Label::new(Some(&app_title));
+               //lbr.set_child(Some(&lbrl));
+               //list_box.prepend(&lbrl);
            }
        }
    })); 

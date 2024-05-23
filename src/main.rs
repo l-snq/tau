@@ -1,5 +1,4 @@
-use gtk::prelude::*;
-use gtk::{glib, Application};
+use gtk4::{prelude::*, glib, Application};
 
 pub mod run;
 pub mod input;
