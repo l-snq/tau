@@ -1,9 +1,8 @@
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
-use gtk4 as gtk;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk::{
-    ffi::GtkWidget, gio, glib::{self, clone, PropertyGet}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
+    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::{HashMap, HashSet};
 use crate::{actions::on_app_activate, utils::AppField};
@@ -130,7 +129,6 @@ pub fn draw_ui(application: &Application) {
                contained_app.app_name.as_str(), 
                user_text.clone().as_str()
            ).is_some() {
-               //add_row(&app_box, &app_label, hash_set);
                list_box.remove_all();
            }
        }

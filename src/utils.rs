@@ -1,6 +1,4 @@
-use gtk4::prelude::AppInfoExt;
-use gtk4 as gtk;
-use gtk::gio;
+use gtk::{gio, prelude::AppInfoExt};
 use std::process::Command;
  #[derive(Debug, Clone)]
 
@@ -39,8 +37,8 @@ pub fn string_to_command(input: &str) {
 
 // this shouldn't be used!!!! but im stashing it c:
 pub fn hash_match_and_launch_app(
-    widget: gtk4::Widget, 
-    hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>) {
+    widget: gtk::Widget, 
+    hash: &std::collections::HashMap<gtk::Box, gio::AppInfo>) {
      let query_child = &widget;
      let _hashed_child = hash.contains_key(query_child);
      let captured_app = hash.get(query_child).unwrap();

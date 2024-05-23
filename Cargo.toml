@@ -7,16 +7,19 @@ edition = "2021"
 
 [dependencies]
 fuzzy-matcher = "0.3.7"
-gio = "0.17.10"
-glib = "0.17.10"
-gtk4 = "0.7.3"
-gtk4-layer-shell = "0.2.0"
+gio = "0.19.5"
+glib = "0.19.6"
+gtk = { package = "gtk4", version = "0.8", default-features = true}
+gtk4-layer-shell = "0.3.0"
 regex = "1.10.4"
-winit = "0.28.6"
-xdg = "2.5.0"
+winit = "0.30.0"
+xdg = "2.5.2"
+
+[features]
+gtk = ["gtk/v4_12"]
 
 [dependencies.uuid]
-version = "1.6.1"
+version = "1.8.0"
 features = [
     "v4",
     "fast-rng",
