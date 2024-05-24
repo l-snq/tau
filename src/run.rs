@@ -3,7 +3,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use gio::AppInfo;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
-    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Ordering, SearchBar, SearchEntry, TextDirection
+    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Ordering, SearchBar, SearchEntry, TextDirection, prelude::ListBoxRowExt
 };
 use std::collections::{HashMap};
 use crate::{actions::on_app_activate, utils::{AppField, sorting_function}};
@@ -125,7 +125,7 @@ pub fn draw_ui(application: &Application) {
                id: Some(app_id),
            }; // i know this is ugly as shit. deal with it later
 
-           if let (Some(row), Some(row2)) = (list_box.row_at_index(0), list_box.row_at_index(1)) {
+           /* if let (Some(row), Some(row2)) = (list_box.row_at_index(0), list_box.row_at_index(1)) {
 
                let cloned_app_name = contained_app.app_name.clone();
                let cloned_user_text = user_text.clone();
@@ -135,6 +135,11 @@ pub fn draw_ui(application: &Application) {
                    Ordering::Equal
 
                })
+           }; */
+
+           if let Some(lb_row) = list_box.row_at_index(0) {
+               let child_of_row = lb_row.child();
+               list_box.select_row(Some(&lb_row)); // this always makes the top row selected
            }
            
        }
