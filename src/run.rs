@@ -1,11 +1,12 @@
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
+use gio::AppInfo;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
-    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection
+    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Ordering, SearchBar, SearchEntry, TextDirection
 };
-use std::collections::{HashMap, HashSet};
-use crate::{actions::on_app_activate, utils::AppField};
+use std::collections::{HashMap};
+use crate::{actions::on_app_activate, utils::{AppField, sorting_function}};
 
 pub fn draw_ui(application: &Application) {
    
@@ -96,7 +97,7 @@ pub fn draw_ui(application: &Application) {
     }
    parent_box.prepend(&entry);
    
-    // continue some search entry logic here
+   // continue some search entry logic here
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
        let relevant_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
        relevant_box.set_focusable(true);
@@ -106,7 +107,6 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        let apps = gio::AppInfo::all();
        for app in apps {
-           let hash_set: HashSet<&gtk4::Label> = HashSet::new();
            let app_name = app
                .display_name()
                .to_string()
@@ -125,16 +125,18 @@ pub fn draw_ui(application: &Application) {
                id: Some(app_id),
            }; // i know this is ugly as shit. deal with it later
 
-           if matcher.fuzzy_match(
-               contained_app.app_name.as_str(), 
-               user_text.clone().as_str()
-           ).is_some() {
-               list_box.remove_all();
-               let lbr = gtk4::ListBoxRow::new();
-               let lbrl = gtk4::Label::new(Some(&app_title));
-               //lbr.set_child(Some(&lbrl));
-               //list_box.prepend(&lbrl);
+           if let (Some(row), Some(row2)) = (list_box.row_at_index(0), list_box.row_at_index(1)) {
+
+               let cloned_app_name = contained_app.app_name.clone();
+               let cloned_user_text = user_text.clone();
+
+               list_box.set_sort_func(|row, row2| move |cloned_app_name, cloned_user_text|-> Ordering {
+                   sorting_function(cloned_app_name, cloned_user_text);
+                   Ordering::Equal
+
+               })
            }
+           
        }
    })); 
 
@@ -164,6 +166,8 @@ pub fn draw_ui(application: &Application) {
        //list_box.remove(&relevant_box);
 
    }));
+   
+   //list_box.set_filter_func(sorting_function(, user_text))
    scrolled_window.set_child(Some(&parent_box));
 
    on_app_activate(&application);

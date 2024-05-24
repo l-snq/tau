@@ -1,5 +1,8 @@
 use gtk4::{gio, prelude::AppInfoExt};
 use std::process::Command;
+use fuzzy_matcher::FuzzyMatcher;
+use fuzzy_matcher::skim::SkimMatcherV2;
+
  #[derive(Debug, Clone)]
 
 pub struct AppField {
@@ -48,3 +51,11 @@ pub fn hash_match_and_launch_app(
          gio::AppLaunchContext::NONE);
 }
 
+pub fn sorting_function(app_name: String, user_text: String,) {
+    let matcher = SkimMatcherV2::default();
+
+    if matcher.fuzzy_match(&app_name, &user_text).is_some() {
+        println!("///////////////////theres a match");
+    };
+
+}
