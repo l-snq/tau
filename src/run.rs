@@ -103,13 +103,12 @@ pub fn draw_ui(application: &Application) {
     }
    // continue some search entry logic here
    entry.connect_search_changed(clone!(@weak list_box, @strong app_info_vector => move |entry| {
-       let relevant_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
-       relevant_box.set_focusable(true);
        let user_text = entry
            .text()
            .to_string()
            .to_lowercase();
 
+       list_box.set_focusable(true);
        let matcher = SkimMatcherV2::default();
        let mut app_vec_clone = app_info_vector.clone(); 
        app_vec_clone.sort_unstable(); 
@@ -119,14 +118,18 @@ pub fn draw_ui(application: &Application) {
            let label = gtk4::Label::new(Some(&item_name));
            let lbr = ListBoxRow::new();
            if matcher.fuzzy_indices(&item_name, &user_text).is_some() {
-               lbr.set_child(Some(&label));
-               list_box.prepend(&lbr);
+
+                   lbr.set_child(Some(&label));
+                   list_box.prepend(&lbr);
+                   if item_name == user_text {
+                       break;
+                   }
            }
 
-       if let Some(lb_row) = list_box.row_at_index(0) {
-           let child_of_row = lb_row.child();
-           list_box.select_row(Some(&lb_row)); // this always makes the top row selected
-       }
+           if let Some(lb_row) = list_box.row_at_index(0) {
+               let child_of_row = lb_row.child();
+               list_box.select_row(Some(&lb_row)); // this always makes the top row selected
+           }
    }
    })); 
 
@@ -152,8 +155,8 @@ pub fn draw_ui(application: &Application) {
            } 
        }
    }));
-   entry.connect_stop_search(clone!(@weak list_box => move |entry|{
-       //list_box.remove(&relevant_box);
+   entry.connect_stop_search(clone!(@weak list_box,=> move |entry|{
+       list_box.remove_all();
 
    }));
    
