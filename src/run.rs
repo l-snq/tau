@@ -3,7 +3,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use gio::AppInfo;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
-    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Ordering, SearchBar, SearchEntry, TextDirection
+    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, CustomSorter, IconLookupFlags, IconTheme, Image, ListBoxRow, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::{HashMap};
 use crate::{actions::on_app_activate, utils::{AppField, sorting_function}};
@@ -97,6 +97,8 @@ pub fn draw_ui(application: &Application) {
     }
    parent_box.prepend(&entry);
    
+
+   let mut app_info_vector = vec![];
    // continue some search entry logic here
    entry.connect_search_changed(clone!(@weak list_box => move |entry| {
        let relevant_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
@@ -107,36 +109,23 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        let apps = gio::AppInfo::all();
        for app in apps {
-           let app_name = app
-               .display_name()
-               .to_string()
-               .to_lowercase();
-           let app_title = app
-               .display_name()
-               .to_string(); // adding this so the titles when rendered aren't all in lowercase
-           let app_id = app
-               .id()
-               .unwrap()
-               .to_string();
            let matcher = SkimMatcherV2::default();
-           let contained_app = AppField {
-               app_name,
-               app_info: Some(app),
-               id: Some(app_id),
-           }; // i know this is ugly as shit. deal with it later
+          
+           app_info_vector.push(app.clone());
+           let mut app_vec_clone = app_info_vector.clone(); 
+           app_vec_clone.sort_unstable(); 
+           app_vec_clone.dedup();
+           for i in app_vec_clone {
+               let item_name = i.name();
+               let label = gtk4::Label::new(Some(&item_name));
+               let lbr = ListBoxRow::new();
+               if matcher.fuzzy_match(&item_name, &user_text).is_some() {
+                   lbr.set_child(Some(&label));
+                   list_box.prepend(&lbr);
+               }
 
-           if let (Some(row), Some(row2)) = (list_box.row_at_index(0), list_box.row_at_index(1)) {
-
-               let cloned_app_name = contained_app.app_name.clone();
-               let cloned_user_text = user_text.clone();
-
-               list_box.set_sort_func(|row, row2| move |cloned_app_name, cloned_user_text|-> Ordering {
-                   sorting_function(cloned_app_name, cloned_user_text);
-                   Ordering::Equal
-
-               })
-           }
-           
+        };
+           // good god what have i done
        }
    })); 
 
