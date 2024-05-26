@@ -1,11 +1,12 @@
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
+use glib::property::PropertyGet;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
-    gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, ListBoxRow, SearchBar, SearchEntry, TextDirection, prelude::ListBoxRowExt
+    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
 use std::collections::HashMap;
-use crate::{actions::on_app_activate, utils::{AppField, sorting_function}};
+use crate::{actions::on_app_activate, utils::AppField};
 
 pub fn draw_ui(application: &Application) {
    let draw_window = ApplicationWindow::builder()
@@ -98,39 +99,46 @@ pub fn draw_ui(application: &Application) {
 
    let apps = gio::AppInfo::all();
    let mut app_info_vector = vec![];
+   let mut instance_hash = HashMap::new();
    for app in apps {
        app_info_vector.push(app.clone());
-    }
+       let app_name = app.display_name().to_string();
+       instance_hash.insert(app_name.clone(), app_name.clone());
+
+   }
    // continue some search entry logic here
-   entry.connect_search_changed(clone!(@weak list_box, @strong app_info_vector => move |entry| {
+   entry.connect_search_changed(clone!(
+           @weak list_box, 
+           @strong app_info_vector, 
+           @strong instance_hash, 
+           => move |entry| {
        let user_text = entry
            .text()
            .to_string()
            .to_lowercase();
 
        list_box.set_focusable(true);
-       let matcher = SkimMatcherV2::default();
        let mut app_vec_clone = app_info_vector.clone(); 
        app_vec_clone.sort_unstable(); 
        app_vec_clone.dedup();
-       for i in app_vec_clone {
-           let item_name = i.name();
-           let label = gtk4::Label::new(Some(&item_name));
-           let lbr = ListBoxRow::new();
-           if matcher.fuzzy_indices(&item_name, &user_text).is_some() {
+       let lbr = ListBoxRow::new();
+       list_box.set_sort_func(clone!(@strong lbr, @strong user_text, @strong instance_hash => move |a, b| {
+          
+           let matcher = SkimMatcherV2::default();
+           let Some(name) = instance_hash.remove(&user_text);
 
-                   lbr.set_child(Some(&label));
-                   list_box.prepend(&lbr);
-                   if item_name == user_text {
-                       break;
-                   }
-           }
+           if matcher.fuzzy_match(&name, &user_text).is_some() {
 
-           if let Some(lb_row) = list_box.row_at_index(0) {
-               let child_of_row = lb_row.child();
-               list_box.select_row(Some(&lb_row)); // this always makes the top row selected
+               name.cmp(&user_text).into()
+           }  else {
+               Ordering::Equal
            }
-   }
+           
+       }));
+
+       if let Some(lb_row) = list_box.row_at_index(0) {
+           list_box.select_row(Some(&lb_row)); // this always makes the top row selected
+       }
    })); 
 
    entry.connect_activate(clone!(@weak list_box => move |entry| {

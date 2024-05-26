@@ -8,7 +8,9 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 pub struct AppField {
     pub app_name: String,
     pub app_info: Option<gio::AppInfo>,
-    pub id: Option<String>,
+    pub id: Option<String>, // this is annoying. You have to unwrap it, 
+                            // then turn it into a string,
+                            //AND THEN WRAP IT AGAIN
 }
 
 impl AppField {
@@ -57,5 +59,4 @@ pub fn sorting_function(app_name: String, user_text: String,) {
     if matcher.fuzzy_match(&app_name, &user_text).is_some() {
         println!("///////////////////theres a match");
     };
-
 }
