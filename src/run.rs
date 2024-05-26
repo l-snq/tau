@@ -8,7 +8,6 @@ use std::collections::HashMap;
 use crate::{actions::on_app_activate, utils::{AppField, sorting_function}};
 
 pub fn draw_ui(application: &Application) {
-   
    let draw_window = ApplicationWindow::builder()
         .default_width(300)
         .default_height(300)
@@ -97,37 +96,36 @@ pub fn draw_ui(application: &Application) {
    parent_box.prepend(&entry);
    
 
+   let apps = gio::AppInfo::all();
    let mut app_info_vector = vec![];
+   for app in apps {
+       app_info_vector.push(app.clone());
+    }
    // continue some search entry logic here
-   entry.connect_search_changed(clone!(@weak list_box => move |entry| {
+   entry.connect_search_changed(clone!(@weak list_box, @strong app_info_vector => move |entry| {
        let relevant_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
        relevant_box.set_focusable(true);
        let user_text = entry
            .text()
            .to_string()
            .to_lowercase();
-       let apps = gio::AppInfo::all();
-       for app in apps {
-           let matcher = SkimMatcherV2::default();
-          
-           app_info_vector.push(app.clone());
-           let mut app_vec_clone = app_info_vector.clone(); 
-           app_vec_clone.sort_unstable(); 
-           app_vec_clone.dedup();
-           for i in app_vec_clone {
-               let item_name = i.name();
-               let label = gtk4::Label::new(Some(&item_name));
-               let lbr = ListBoxRow::new();
-               if matcher.fuzzy_match(&item_name, &user_text).is_some() {
-                   lbr.set_child(Some(&label));
-                   list_box.prepend(&lbr);
-               }
 
-           if let Some(lb_row) = list_box.row_at_index(0) {
-               let child_of_row = lb_row.child();
-               list_box.select_row(Some(&lb_row)); // this always makes the top row selected
+       let matcher = SkimMatcherV2::default();
+       let mut app_vec_clone = app_info_vector.clone(); 
+       app_vec_clone.sort_unstable(); 
+       app_vec_clone.dedup();
+       for i in app_vec_clone {
+           let item_name = i.name();
+           let label = gtk4::Label::new(Some(&item_name));
+           let lbr = ListBoxRow::new();
+           if matcher.fuzzy_indices(&item_name, &user_text).is_some() {
+               lbr.set_child(Some(&label));
+               list_box.prepend(&lbr);
            }
-           
+
+       if let Some(lb_row) = list_box.row_at_index(0) {
+           let child_of_row = lb_row.child();
+           list_box.select_row(Some(&lb_row)); // this always makes the top row selected
        }
    }
    })); 
