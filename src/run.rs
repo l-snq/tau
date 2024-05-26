@@ -1,10 +1,10 @@
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
-use glib::property::PropertyGet;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
     gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
+use core::panic;
 use std::collections::HashMap;
 use crate::{actions::on_app_activate, utils::AppField};
 
@@ -125,7 +125,10 @@ pub fn draw_ui(application: &Application) {
        list_box.set_sort_func(clone!(@strong lbr, @strong user_text, @strong instance_hash => move |a, b| {
           
            let matcher = SkimMatcherV2::default();
-           let Some(name) = instance_hash.remove(&user_text);
+           let mut cloned_hash = instance_hash.clone();
+           let Some(name) = cloned_hash.remove(&user_text) else {
+               panic!("something went wrong with getting the hash");
+           };
 
            if matcher.fuzzy_match(&name, &user_text).is_some() {
 
