@@ -1,11 +1,10 @@
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
-use gio::AppInfo;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
     gio, glib::{self, clone}, prelude::*, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, ListBoxRow, SearchBar, SearchEntry, TextDirection, prelude::ListBoxRowExt
 };
-use std::collections::{HashMap};
+use std::collections::HashMap;
 use crate::{actions::on_app_activate, utils::{AppField, sorting_function}};
 
 pub fn draw_ui(application: &Application) {
