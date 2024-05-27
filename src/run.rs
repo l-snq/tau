@@ -4,8 +4,8 @@ use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
     gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
-use std::collections::HashMap;
-use crate::{actions::on_app_activate, utils::AppField};
+use std::{cmp::PartialOrd, collections::HashMap};
+use crate::{actions::on_app_activate, utils::{AppField, SearchStrings}};
 
 pub fn draw_ui(application: &Application) {
    let draw_window = ApplicationWindow::builder()
@@ -29,7 +29,7 @@ pub fn draw_ui(application: &Application) {
 
    let mut hash = HashMap::new();
 
-   let apps = gio::AppInfo::all(); 
+   let mut apps = gio::AppInfo::all(); 
 
    let bar = SearchBar::builder()
        .valign(gtk4::Align::Start)
@@ -65,7 +65,6 @@ pub fn draw_ui(application: &Application) {
        let lbr = gtk4::ListBoxRow::new();
        let lbr_label = gtk4::Label::new(Some(&app_name));
        lbr.set_child(Some(&lbr_label));
-       list_box.append(&lbr);
 
        if let Some(gtk_icon_name) = app.icon() {
             let some_icon_theme = Some(icon_theme.lookup_by_gicon(
@@ -80,6 +79,7 @@ pub fn draw_ui(application: &Application) {
                 image_icon_setup.set_from_gicon(&gtk_icon_name);
                 // move this into entry.search_changed ?
             } 
+           // creating this to sanitize the vector of App
        }        
 
        hash.insert(icon_box.clone(), app.clone()); 
@@ -92,9 +92,10 @@ pub fn draw_ui(application: &Application) {
        };
 
        contained_app.update_fields(); 
-    }
+   }
    parent_box.prepend(&entry);
-   
+
+   let search_strings_struct = SearchStrings::new();
 
    let apps = gio::AppInfo::all();
    let mut app_info_vector = vec![];
@@ -105,6 +106,7 @@ pub fn draw_ui(application: &Application) {
        instance_hash.insert(app_name.clone(), app_name.clone());
 
    }
+
    // continue some search entry logic here
    entry.connect_search_changed(clone!(
            @weak list_box, 
@@ -116,6 +118,7 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
 
+       search_strings_struct.update_fields(Some(user_text.clone()));
        list_box.set_focusable(true);
        let mut app_vec_clone = app_info_vector.clone(); 
        app_vec_clone.sort_unstable(); 
@@ -126,10 +129,17 @@ pub fn draw_ui(application: &Application) {
            let matcher = SkimMatcherV2::default();
            let cloned_hash = instance_hash.clone();
            let text_match = match cloned_hash.get(&user_text) { // this isn't moving rows around
-               Some(value) => Ordering::Equal,
-               None => Ordering::Smaller,
-            };
+               Some(value) => { 
+                   let partial_cmp = value.partial_cmp(&user_text).unwrap().into();
+                   partial_cmp 
+               },
+               None => {
+                   Ordering::Smaller
+               },
+           };
 
+           // println textmatch
+           println!("{:?}", text_match);
            text_match
 
            /* if matcher.fuzzy_match(&name, &user_text).is_some() {
@@ -147,7 +157,6 @@ pub fn draw_ui(application: &Application) {
    })); 
 
    entry.connect_activate(clone!(@weak list_box => move |entry| {
-       println!("your value: {}", entry.text());
        let user_string = entry.text().to_string();
        let apps = gio::AppInfo::all();
        for app in apps {

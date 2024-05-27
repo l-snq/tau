@@ -3,8 +3,25 @@ use std::process::Command;
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
 
- #[derive(Debug, Clone)]
+#[derive(Debug, Clone)]
+pub struct SearchStrings {
+    pub user_text: String
+}
 
+impl SearchStrings {
+    pub fn new() -> Self {
+        Self {
+            user_text: String::new(),
+        }
+    }
+
+    pub fn update_fields(mut self, user_text: Option<String>) {
+        if let Some(new_user_text) = user_text {
+            self.user_text = new_user_text;
+        }
+    }
+}
+ #[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
     pub app_info: Option<gio::AppInfo>,
