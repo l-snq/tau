@@ -2,9 +2,8 @@ use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
 use gtk4_layer_shell::{Layer, LayerShell, KeyboardMode};
 use gtk4::{
-    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
+    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
-use core::panic;
 use std::collections::HashMap;
 use crate::{actions::on_app_activate, utils::AppField};
 
@@ -125,17 +124,20 @@ pub fn draw_ui(application: &Application) {
        list_box.set_sort_func(clone!(@strong lbr, @strong user_text, @strong instance_hash => move |a, b| {
           
            let matcher = SkimMatcherV2::default();
-           let mut cloned_hash = instance_hash.clone();
-           let Some(name) = cloned_hash.remove(&user_text) else {
-               panic!("something went wrong with getting the hash");
-           };
+           let cloned_hash = instance_hash.clone();
+           let text_match = match cloned_hash.get(&user_text) { // this isn't moving rows around
+               Some(value) => Ordering::Equal,
+               None => Ordering::Smaller,
+            };
 
-           if matcher.fuzzy_match(&name, &user_text).is_some() {
+           text_match
+
+           /* if matcher.fuzzy_match(&name, &user_text).is_some() {
 
                name.cmp(&user_text).into()
            }  else {
                Ordering::Equal
-           }
+           } */
            
        }));
 
@@ -167,7 +169,7 @@ pub fn draw_ui(application: &Application) {
        }
    }));
    entry.connect_stop_search(clone!(@weak list_box,=> move |entry|{
-       list_box.remove_all();
+       // list_box.remove_all();
 
    }));
    
