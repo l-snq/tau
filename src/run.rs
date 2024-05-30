@@ -105,6 +105,7 @@ pub fn draw_ui(application: &Application) {
     parent_box.prepend(&entry);
 
     let text = entry.text().to_string().to_lowercase();
+    // this sort function isn't even being hit
     list_box.set_sort_func(clone!(@strong text, @strong instance_hash => move |a, b| {
        let matcher = SkimMatcherV2::default();
        let cloned_hash = instance_hash.clone();
@@ -162,6 +163,9 @@ pub fn draw_ui(application: &Application) {
         // list_box.remove_all();
         std::process::exit(0);
    }));
+   // listbox.connect_row_activated
+   // listbox.connect_row_selected
+   // do some magic with these guys
 
 
     scrolled_window.set_child(Some(&parent_box));
