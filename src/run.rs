@@ -138,6 +138,7 @@ pub fn draw_ui(application: &Application) {
 
        if let Some(lb_row) = list_box.row_at_index(0) {
            list_box.select_row(Some(&lb_row)); // this always makes the top row selected
+           lb_row.changed();
        }
     }));
     // this sort function isn't even being hit
