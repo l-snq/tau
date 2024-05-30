@@ -104,8 +104,22 @@ pub fn draw_ui(application: &Application) {
     }
     parent_box.prepend(&entry);
 
+    let text = entry.text().to_string().to_lowercase();
+    list_box.set_sort_func(clone!(@strong text, @strong instance_hash => move |a, b| {
+       let matcher = SkimMatcherV2::default();
+       let cloned_hash = instance_hash.clone();
+       let text_match = match cloned_hash.get(&text) { // this isn't moving rows around
+           Some(value) => { 
+               let partial_cmp = value.partial_cmp(&text).unwrap().into();
+               partial_cmp 
+           },
+           None => {
+               Ordering::Smaller
+           },
+       };
+       text_match
+    }));
     // continue some search entry logic here
-    entry.text();
     entry.connect_search_changed(clone!(
            @weak list_box, 
            @strong instance_hash, 
@@ -146,24 +160,9 @@ pub fn draw_ui(application: &Application) {
 
    entry.connect_stop_search(clone!(@weak list_box,=> move |entry|{
         // list_box.remove_all();
-
+        std::process::exit(0);
    }));
 
-   let text = entry.text().to_string().to_lowercase();
-   list_box.set_sort_func(clone!(@strong text, @strong instance_hash => move |a, b| {
-       let matcher = SkimMatcherV2::default();
-       let cloned_hash = instance_hash.clone();
-       let text_match = match cloned_hash.get(&text) { // this isn't moving rows around
-           Some(value) => { 
-               let partial_cmp = value.partial_cmp(&text).unwrap().into();
-               partial_cmp 
-           },
-           None => {
-               Ordering::Smaller
-           },
-       };
-       text_match
-   }));
 
     scrolled_window.set_child(Some(&parent_box));
 
