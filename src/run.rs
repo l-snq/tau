@@ -29,15 +29,17 @@ pub fn draw_ui(application: &Application) {
     LayerShell::auto_exclusive_zone_enable(&draw_window);
 
     let list_box = gtk4::ListBox::new();
+    list_box.invalidate_sort();
+    list_box.invalidate_filter();
     let scrolled_window = gtk4::ScrolledWindow::builder()
         .name("scrollable window")
         .hscrollbar_policy(gtk4::PolicyType::Never)
         .build();
 
     let mut hash = HashMap::new();
-    let mut instance_hash = HashMap::new();
+    let mut instance_hash: HashMap<String, String> = HashMap::new();
 
-    let mut apps = gio::AppInfo::all();
+    let apps = gio::AppInfo::all();
 
     let bar = SearchBar::builder()
         .valign(gtk4::Align::Start)
@@ -57,6 +59,21 @@ pub fn draw_ui(application: &Application) {
 
     let parent_box = gtk4::Box::new(gtk4::Orientation::Vertical, 20);
     parent_box.append(&list_box);
+    let text = entry.text().to_string().to_lowercase();
+    list_box.set_sort_func(clone!(@strong text, @strong instance_hash => move |a, b| {
+       let matcher = SkimMatcherV2::default();
+       let cloned_hash = instance_hash.clone();
+       let text_match = match cloned_hash.get(&text) { // this isn't moving rows around
+           Some(value) => { 
+               let partial_cmp = value.partial_cmp(&text).unwrap().into();
+               partial_cmp 
+           },
+           None => {
+               Ordering::Smaller
+           },
+       };
+       text_match
+    }));
 
     for app in &apps {
         let app_name = app.display_name().to_string();
@@ -72,6 +89,7 @@ pub fn draw_ui(application: &Application) {
         let lbr_label = gtk4::Label::new(Some(&app_name));
         lbr.set_child(Some(&lbr_label));
         list_box.prepend(&lbr);
+        list_box.invalidate_sort();
 
         if let Some(gtk_icon_name) = app.icon() {
             let some_icon_theme = Some(icon_theme.lookup_by_gicon(
@@ -104,22 +122,8 @@ pub fn draw_ui(application: &Application) {
     }
     parent_box.prepend(&entry);
 
-    let text = entry.text().to_string().to_lowercase();
-    // this sort function isn't even being hit
-    list_box.set_sort_func(clone!(@strong text, @strong instance_hash => move |a, b| {
-       let matcher = SkimMatcherV2::default();
-       let cloned_hash = instance_hash.clone();
-       let text_match = match cloned_hash.get(&text) { // this isn't moving rows around
-           Some(value) => { 
-               let partial_cmp = value.partial_cmp(&text).unwrap().into();
-               partial_cmp 
-           },
-           None => {
-               Ordering::Smaller
-           },
-       };
-       text_match
-    }));
+
+    list_box.set_focusable(true);
     // continue some search entry logic here
     entry.connect_search_changed(clone!(
            @weak list_box, 
@@ -130,16 +134,18 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
 
-       list_box.set_focusable(true);
+       list_box.invalidate_filter();
 
        if let Some(lb_row) = list_box.row_at_index(0) {
            list_box.select_row(Some(&lb_row)); // this always makes the top row selected
        }
-   }));
+    }));
+    // this sort function isn't even being hit
 
     entry.connect_activate(clone!(@weak list_box => move |entry| {
        let user_string = entry.text().to_string();
        let apps = gio::AppInfo::all();
+       // if row index 0, row.activate();
        for app in apps {
            let app_name = app.display_name().to_string();
            let app_id = app.id().unwrap().to_string();
