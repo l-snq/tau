@@ -1,20 +1,18 @@
-use gtk4::{prelude::*, glib, Application};
+use gtk4::{glib, prelude::*, Application};
 
-pub mod run;
-pub mod input;
-pub mod utils;
 pub mod actions;
+pub mod input;
+pub mod run;
+pub mod utils;
 
 const APP_ID: &str = "org.tau.Main";
 
 fn main() -> glib::ExitCode {
-    // TODO! 
+    // TODO!
 
-    let app = Application::builder()
-        .application_id(APP_ID)
-        .build();
+    let app = Application::builder().application_id(APP_ID).build();
 
-    //run::run_rs();    
+    //run::run_rs();
 
     app.connect_activate(run::draw_ui);
     app.run()

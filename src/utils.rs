@@ -1,31 +1,13 @@
+use fuzzy_matcher::skim::SkimMatcherV2;
+use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{gio, prelude::AppInfoExt};
 use std::process::Command;
-use fuzzy_matcher::FuzzyMatcher;
-use fuzzy_matcher::skim::SkimMatcherV2;
 
 #[derive(Debug, Clone)]
-pub struct SearchStrings {
-    pub user_text: String
-}
-
-impl SearchStrings {
-    pub fn new() -> Self {
-        Self {
-            user_text: String::new(),
-        }
-    }
-
-    pub fn update_fields(mut self, user_text: Option<String>) {
-        if let Some(new_user_text) = user_text {
-            self.user_text = new_user_text;
-        }
-    }
-}
- #[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
     pub app_info: Option<gio::AppInfo>,
-    pub id: Option<String>, // this is annoying. You have to unwrap it, 
+    pub id: Option<String>, // this is annoying. You have to unwrap it,
                             // then turn it into a string,
                             //AND THEN WRAP IT AGAIN
 }
@@ -59,18 +41,16 @@ pub fn string_to_command(input: &str) {
 
 // this shouldn't be used!!!! but im stashing it c:
 pub fn hash_match_and_launch_app(
-    widget: gtk4::Widget, 
-    hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>) {
-     let query_child = &widget;
-     let _hashed_child = hash.contains_key(query_child);
-     let captured_app = hash.get(query_child).unwrap();
-     let _launch_app = gio::AppInfo::launch(
-         &captured_app, 
-         &[], 
-         gio::AppLaunchContext::NONE);
+    widget: gtk4::Widget,
+    hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>,
+) {
+    let query_child = &widget;
+    let _hashed_child = hash.contains_key(query_child);
+    let captured_app = hash.get(query_child).unwrap();
+    let _launch_app = gio::AppInfo::launch(&captured_app, &[], gio::AppLaunchContext::NONE);
 }
 
-pub fn sorting_function(app_name: String, user_text: String,) {
+pub fn sorting_function(app_name: String, user_text: String) {
     let matcher = SkimMatcherV2::default();
 
     if matcher.fuzzy_match(&app_name, &user_text).is_some() {
