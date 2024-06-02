@@ -5,14 +5,10 @@ use crate::{
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{
-    gio,
-    glib::{self, clone},
-    prelude::{ListBoxRowExt, *},
-    Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, Ordering,
-    SearchBar, SearchEntry, TextDirection,
+    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
-use std::{cmp::PartialOrd, collections::HashMap};
+use std::{cmp::PartialOrd, collections::HashMap, borrow::Borrow};
 
 pub fn draw_ui(application: &Application) {
     let draw_window = ApplicationWindow::builder()
@@ -59,21 +55,7 @@ pub fn draw_ui(application: &Application) {
 
     let parent_box = gtk4::Box::new(gtk4::Orientation::Vertical, 20);
     parent_box.append(&list_box);
-    let text = entry.text().to_string().to_lowercase();
-    list_box.set_sort_func(clone!(@strong text, @strong instance_hash => move |a, b| {
-       let matcher = SkimMatcherV2::default();
-       let cloned_hash = instance_hash.clone();
-       let text_match = match cloned_hash.get(&text) { // this isn't moving rows around
-           Some(value) => { 
-               let partial_cmp = value.partial_cmp(&text).unwrap().into();
-               partial_cmp 
-           },
-           None => {
-               Ordering::Smaller
-           },
-       };
-       text_match
-    }));
+
 
     for app in &apps {
         let app_name = app.display_name().to_string();
@@ -117,11 +99,33 @@ pub fn draw_ui(application: &Application) {
         };
         let app_name = app.display_name().to_string();
         instance_hash.insert(app_name.clone(), app_name.clone());
+        println!("1st = {:?}", instance_hash.get(&app_name));
 
         contained_app.update_fields();
     }
     parent_box.prepend(&entry);
 
+    // sort func goes here
+    let text = entry.text().to_string().to_lowercase();
+    let cloned_instance_hash = instance_hash.clone();
+    /* list_box.set_sort_func(move |a: &ListBoxRow, b: &ListBoxRow| {
+        let cih = cloned_instance_hash.clone();
+
+        println!("2nd = {:?}", cloned_instance_hash.get("kitty"));
+        let matcher = SkimMatcherV2::default();
+        /* let text_match = match cih.get(&text) {
+           Some(value) => { 
+               let partial_cmp = a.partial_cmp(b).unwrap().into();
+               partial_cmp
+           },
+           None => {
+               Ordering::Smaller
+           },
+        };
+        text_match */
+        let cmp = a.cmp(b).into();
+        cmp
+    }); */
 
     list_box.set_focusable(true);
     // continue some search entry logic here
@@ -135,6 +139,9 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
 
        list_box.invalidate_filter();
+       list_box.select_row(list_box.row_at_index(0).as_ref());
+       // make it so that the IF the row contains the entry.text(), make it visible, else make the
+       // row not visible
 
        if let Some(lb_row) = list_box.row_at_index(0) {
            list_box.select_row(Some(&lb_row)); // this always makes the top row selected
