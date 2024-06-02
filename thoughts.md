@@ -11,6 +11,6 @@ then sort and re order then as you search
 2. Insert all list box rows at beginning of launch, then remove all and only return 10 at a time,
 and clear them every time you do a search change.
 
-We should store the app infos, in a Vector. Then we can modify the vector, and make sure it doesn't have any duplicate AppInfos. 
+stored the app infos in a hash
 Then, we iterate through the vector, and add a row for each item 
 that is NOT duplicated.
