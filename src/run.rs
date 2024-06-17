@@ -5,7 +5,7 @@ use crate::{
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{
-    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
+    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
 use std::{cmp::PartialOrd, collections::HashMap, borrow::Borrow};
@@ -68,9 +68,10 @@ pub fn draw_ui(application: &Application) {
 
         // rendering out all the results in appInfo
         let lbr = gtk4::ListBoxRow::new();
+        lbr.set_widget_name(&app_name);
         let lbr_label = gtk4::Label::new(Some(&app_name));
         lbr.set_child(Some(&lbr_label));
-        list_box.prepend(&lbr);
+        //list_box.prepend(&lbr);
         list_box.invalidate_sort();
 
         if let Some(gtk_icon_name) = app.icon() {
@@ -99,32 +100,36 @@ pub fn draw_ui(application: &Application) {
         };
         let app_name = app.display_name().to_string();
         instance_hash.insert(app_name.clone(), app_name.clone());
-        println!("1st = {:?}", instance_hash.get(&app_name));
 
         contained_app.update_fields();
     }
     parent_box.prepend(&entry);
 
     // sort func goes here
-    let text = entry.text().to_string().to_lowercase();
-    let cloned_instance_hash = instance_hash.clone();
     /* list_box.set_sort_func(move |a: &ListBoxRow, b: &ListBoxRow| {
         let cih = cloned_instance_hash.clone();
 
-        println!("2nd = {:?}", cloned_instance_hash.get("kitty"));
         let matcher = SkimMatcherV2::default();
+        let cmp = text.cmp(&a.widget_name().to_string());
+        if cmp.is_eq() {
+            println!("text matches with a row");
+            a.set_visible(false);
+            b.set_visible(false);
+        } else {
+            println!("fuck ya {}: {}", a.widget_name(), b.widget_name());
+        }
+        cmp.into()
         /* let text_match = match cih.get(&text) {
            Some(value) => { 
-               let partial_cmp = a.partial_cmp(b).unwrap().into();
+               let partial_cmp = value.partial_cmp(&a.widget_name()).unwrap().into();
+               // e[a].cmp[b]
                partial_cmp
            },
            None => {
-               Ordering::Smaller
+               Ordering::__Unknown(9)
            },
         };
         text_match */
-        let cmp = a.cmp(b).into();
-        cmp
     }); */
 
     list_box.set_focusable(true);
@@ -137,15 +142,36 @@ pub fn draw_ui(application: &Application) {
            .text()
            .to_string()
            .to_lowercase();
+       let matcher = SkimMatcherV2::default();
 
-       list_box.invalidate_filter();
+       let apps = gio::AppInfo::all();
+       for app in apps {
+           let lbl = Label::new(Some(&app.display_name()));
+           let lbr = ListBoxRow::new();
+           lbr.set_widget_name(&app.display_name());
+           lbr.set_child(Some(&lbl));
+
+           list_box.prepend(&lbr);
+           if let Some(first_child) = list_box.first_child() {
+               if matcher.fuzzy_match(
+                   first_child.widget_name().as_str(), 
+                   &user_text.as_str()
+               ).is_some() {
+                   println!("this partially matches");
+
+               } else {
+                   list_box.remove(&first_child);
+               };
+           }
+       }
+
        list_box.select_row(list_box.row_at_index(0).as_ref());
-       // make it so that the IF the row contains the entry.text(), make it visible, else make the
+       // make it so that IF the row contains the entry.text(), make it visible, else make the
        // row not visible
 
        if let Some(lb_row) = list_box.row_at_index(0) {
-           list_box.select_row(Some(&lb_row)); // this always makes the top row selected
            lb_row.changed();
+           list_box.invalidate_sort();
        }
     }));
     // this sort function isn't even being hit
@@ -181,11 +207,10 @@ pub fn draw_ui(application: &Application) {
    // listbox.connect_row_selected
    // do some magic with these guys
 
-
     scrolled_window.set_child(Some(&parent_box));
 
     on_app_activate(&application);
     draw_window.set_child(Some(&scrolled_window));
     draw_window.set_size_request(100, 400);
-    draw_window.show();
+    draw_window.set_visible(true);
 }
