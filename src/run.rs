@@ -8,7 +8,7 @@ use gtk4::{
     gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
-use std::{cmp::PartialOrd, collections::HashMap, borrow::Borrow};
+use std::{borrow::Borrow, cmp::PartialOrd, collections::HashMap, ptr::eq};
 
 pub fn draw_ui(application: &Application) {
     let draw_window = ApplicationWindow::builder()
@@ -71,7 +71,6 @@ pub fn draw_ui(application: &Application) {
         lbr.set_widget_name(&app_name);
         let lbr_label = gtk4::Label::new(Some(&app_name));
         lbr.set_child(Some(&lbr_label));
-        //list_box.prepend(&lbr);
         list_box.invalidate_sort();
 
         if let Some(gtk_icon_name) = app.icon() {
@@ -85,9 +84,7 @@ pub fn draw_ui(application: &Application) {
 
             if some_icon_theme.is_some() {
                 image_icon_setup.set_from_gicon(&gtk_icon_name);
-                // move this into entry.search_changed ?
             }
-            // creating this to sanitize the vector of App
         }
 
         hash.insert(icon_box.clone(), app.clone());
@@ -105,32 +102,6 @@ pub fn draw_ui(application: &Application) {
     }
     parent_box.prepend(&entry);
 
-    // sort func goes here
-    /* list_box.set_sort_func(move |a: &ListBoxRow, b: &ListBoxRow| {
-        let cih = cloned_instance_hash.clone();
-
-        let matcher = SkimMatcherV2::default();
-        let cmp = text.cmp(&a.widget_name().to_string());
-        if cmp.is_eq() {
-            println!("text matches with a row");
-            a.set_visible(false);
-            b.set_visible(false);
-        } else {
-            println!("fuck ya {}: {}", a.widget_name(), b.widget_name());
-        }
-        cmp.into()
-        /* let text_match = match cih.get(&text) {
-           Some(value) => { 
-               let partial_cmp = value.partial_cmp(&a.widget_name()).unwrap().into();
-               // e[a].cmp[b]
-               partial_cmp
-           },
-           None => {
-               Ordering::__Unknown(9)
-           },
-        };
-        text_match */
-    }); */
 
     list_box.set_focusable(true);
     // continue some search entry logic here
@@ -162,19 +133,25 @@ pub fn draw_ui(application: &Application) {
                } else {
                    list_box.remove(&first_child);
                };
+               if let Some(second_child) = list_box.next_sibling() {
+                   let child_string = second_child.widget_name().as_str();
+                   if second_child.cmp(&first_child).is_eq() {
+                       list_box.remove(&second_child);
+                   }
+               }
+               if let Some(row_index) = list_box.row_at_index(10) {
+                   println!("index 10: {}", row_index.widget_name().as_str());
+               }
            }
        }
 
        list_box.select_row(list_box.row_at_index(0).as_ref());
-       // make it so that IF the row contains the entry.text(), make it visible, else make the
-       // row not visible
 
        if let Some(lb_row) = list_box.row_at_index(0) {
            lb_row.changed();
            list_box.invalidate_sort();
        }
     }));
-    // this sort function isn't even being hit
 
     entry.connect_activate(clone!(@weak list_box => move |entry| {
        let user_string = entry.text().to_string();
