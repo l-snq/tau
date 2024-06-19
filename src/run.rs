@@ -126,6 +126,8 @@ pub fn draw_ui(application: &Application) {
            } 
        }
 
+       // JUST MAYBE MAKE IT SO THAT IT ONLY RENDERS ONE ROW THAT WILL ONLY RENDER IF APP INFO
+       // DIRECLTY MATCHES WITH YOUR SEARCH RESULT?
            if let Some(first_child) = list_box.first_child() {
                if matcher.fuzzy_match(
                    first_child.widget_name().as_str(), 
