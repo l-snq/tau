@@ -114,6 +114,17 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
        let matcher = SkimMatcherV2::default();
+       let apps = gio::AppInfo::all();
+       for app in apps {
+
+           if list_box.first_accessible_child().is_some() {
+               list_box.remove_all();
+               let lbl = Label::new(Some(&app.display_name().to_string()));
+               let lbr = ListBoxRow::new();
+               lbr.set_child(Some(&lbl));
+               list_box.prepend(&lbr);
+           } 
+       }
 
            if let Some(first_child) = list_box.first_child() {
                if matcher.fuzzy_match(
@@ -123,19 +134,14 @@ pub fn draw_ui(application: &Application) {
                    println!("this partially matches");
                } 
 
-               while let Some(child) = list_box.last_child() {
-                   if list_box.row_at_index(20).is_some() {
-                       println!("loop broken");
-                       list_box.remove(&list_box.row_at_index(1).unwrap());
-                   }
-                   let first_child = list_box.first_child().unwrap().widget_name().to_string();
-                   let prev_child = child.prev_sibling().unwrap().widget_name().to_string();
-                   /* if child.widget_name().to_string() == prev_child {
-                       println!("CONDITION MET: {}", child.widget_name());
-                       list_box.remove(&child.prev_sibling().unwrap());
+               /* while let Some(child) = list_box.first_child() {
+                   if child == child.next_sibling().unwrap() {
+                       list_box.remove(&child)
+                   } else {
+                       println!("no match");
                        break
-                   } */
-               }
+                   }
+               } */
 
            }
        list_box.select_row(list_box.row_at_index(0).as_ref());
