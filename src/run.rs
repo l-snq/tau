@@ -71,7 +71,7 @@ pub fn draw_ui(application: &Application) {
         lbr.set_widget_name(&app_name);
         let lbr_label = gtk4::Label::new(Some(&app_name));
         lbr.set_child(Some(&lbr_label));
-        list_box.invalidate_sort();
+        list_box.prepend(&lbr);
 
         if let Some(gtk_icon_name) = app.icon() {
             let some_icon_theme = Some(icon_theme.lookup_by_gicon(
@@ -115,41 +115,33 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        let matcher = SkimMatcherV2::default();
 
-       let apps = gio::AppInfo::all();
-       for app in apps {
-           let lbl = Label::new(Some(&app.display_name()));
-           let lbr = ListBoxRow::new();
-           lbr.set_widget_name(&app.display_name());
-           lbr.set_child(Some(&lbl));
-
-           list_box.prepend(&lbr);
            if let Some(first_child) = list_box.first_child() {
                if matcher.fuzzy_match(
                    first_child.widget_name().as_str(), 
                    &user_text.as_str()
                ).is_some() {
                    println!("this partially matches");
+               } 
 
-               } else {
-                   list_box.remove(&first_child);
-               };
-               if let Some(second_child) = list_box.next_sibling() {
-                   let child_string = second_child.widget_name().as_str();
-                   if second_child.cmp(&first_child).is_eq() {
-                       list_box.remove(&second_child);
+               while let Some(child) = list_box.last_child() {
+                   if list_box.row_at_index(20).is_some() {
+                       println!("loop broken");
+                       list_box.remove(&list_box.row_at_index(1).unwrap());
                    }
+                   let first_child = list_box.first_child().unwrap().widget_name().to_string();
+                   let prev_child = child.prev_sibling().unwrap().widget_name().to_string();
+                   /* if child.widget_name().to_string() == prev_child {
+                       println!("CONDITION MET: {}", child.widget_name());
+                       list_box.remove(&child.prev_sibling().unwrap());
+                       break
+                   } */
                }
-               if let Some(row_index) = list_box.row_at_index(10) {
-                   println!("index 10: {}", row_index.widget_name().as_str());
-               }
-           }
-       }
 
+           }
        list_box.select_row(list_box.row_at_index(0).as_ref());
 
        if let Some(lb_row) = list_box.row_at_index(0) {
            lb_row.changed();
-           list_box.invalidate_sort();
        }
     }));
 
