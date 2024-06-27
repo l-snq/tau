@@ -122,15 +122,18 @@ pub fn draw_ui(application: &Application) {
            captured_instance.unwrap_or(&user_text.to_string()),
            &user_text.as_str()
        ).is_some() {
+               list_box.remove_all();
                let some_entry = Some(entry);
                if some_entry.is_some() {
-                   let concat = entry.text().to_string() + &String::from("Yoooo");
-                   let lbl = Label::new(Some(&concat));
-                   let lbr = ListBoxRow::new();
-                   lbr.set_child(Some(&lbl));
-                   list_box.prepend(&lbr);
+                   if instance_hash.contains_key(&user_text) {
+                       let lbl = Label::new(Some(&entry.text().to_string()));
+                       let lbr = ListBoxRow::new();
+                       lbr.set_child(Some(&lbl));
+                       list_box.prepend(&lbr);
+                   }
                }
        } 
+
        list_box.select_row(list_box.row_at_index(0).as_ref());
 
        if let Some(lb_row) = list_box.row_at_index(0) {
