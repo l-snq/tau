@@ -4,12 +4,13 @@ use crate::{
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
-use gio::AppInfo;
 use gtk4::{
-    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
+    gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, SearchBar, SearchEntry, TextDirection
 };
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
-use std::{borrow::Borrow, cmp::PartialOrd, collections::HashMap, ptr::eq};
+use std::collections::HashMap;
+use fst::{Set, IntoStreamer, Streamer};
+use fst::automaton::{Levenshtein, LevenshteinError};
 
 pub fn draw_ui(application: &Application) {
     let draw_window = ApplicationWindow::builder()
@@ -57,6 +58,7 @@ pub fn draw_ui(application: &Application) {
     let parent_box = gtk4::Box::new(gtk4::Orientation::Vertical, 20);
     parent_box.append(&list_box);
 
+    let mut app_names_vec: Vec<String> = vec![];
 
     for app in &apps {
         let app_name = app.display_name().to_string();
@@ -65,7 +67,6 @@ pub fn draw_ui(application: &Application) {
         icon_box.grab_focus();
         icon_box.set_widget_name(&app_name);
         let image_icon_setup = Image::builder().pixel_size(50).build();
-        let title = gtk4::Label::new(Some(&app_name));
 
         // rendering out all the results in appInfo
         let lbr = gtk4::ListBoxRow::new();
@@ -97,6 +98,7 @@ pub fn draw_ui(application: &Application) {
             id: Some(app_id),
         };
         let app_name = app.display_name().to_string();
+        app_names_vec.push(app_name.clone());
         instance_hash.insert(app_name.clone(), app_name.clone());
 
         contained_app.update_fields();
@@ -104,22 +106,29 @@ pub fn draw_ui(application: &Application) {
     parent_box.prepend(&entry);
 
 
+
     list_box.set_focusable(true);
     // continue some search entry logic here
     entry.connect_search_changed(clone!(
            @weak list_box, 
            @strong instance_hash, 
+           @strong app_names_vec
            => move |entry| {
        let user_text = entry
            .text()
            .to_string()
            .to_lowercase();
        let matcher = SkimMatcherV2::default();
-       let apps = gio::AppInfo::all();
+       
+       // create a set 
+       let fst_set = Set::from_iter(app_names_vec.clone());
+       let lev = Levenshtein::new(&user_text, 1);
+
+       let mut stream = fst_set.search(lev).into_stream();
 
        let captured_instance = instance_hash.get(&user_text);
        if matcher.fuzzy_match(
-           captured_instance.unwrap_or(&user_text.to_string()),
+           captured_instance.unwrap_or(&user_text),
            &user_text.as_str()
        ).is_some() {
                list_box.remove_all();
@@ -164,7 +173,7 @@ pub fn draw_ui(application: &Application) {
        }
    }));
 
-   entry.connect_stop_search(clone!(@weak list_box,=> move |entry|{
+   entry.connect_stop_search(clone!(@weak list_box,=> move |_|{
         // list_box.remove_all();
         std::process::exit(0);
    }));
