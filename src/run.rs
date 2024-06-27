@@ -4,6 +4,7 @@ use crate::{
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
+use gio::AppInfo;
 use gtk4::{
     gio, glib::{self, clone}, prelude::{ListBoxRowExt, *}, Application, ApplicationWindow, IconLookupFlags, IconTheme, Image, Label, ListBoxRow, Ordering, SearchBar, SearchEntry, TextDirection
 };
@@ -115,37 +116,21 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        let matcher = SkimMatcherV2::default();
        let apps = gio::AppInfo::all();
-       for app in apps {
 
-           if list_box.first_accessible_child().is_some() {
-               list_box.remove_all();
-               let lbl = Label::new(Some(&app.display_name().to_string()));
-               let lbr = ListBoxRow::new();
-               lbr.set_child(Some(&lbl));
-               list_box.prepend(&lbr);
-           } 
-       }
-
-       // JUST MAYBE MAKE IT SO THAT IT ONLY RENDERS ONE ROW THAT WILL ONLY RENDER IF APP INFO
-       // DIRECLTY MATCHES WITH YOUR SEARCH RESULT?
-           if let Some(first_child) = list_box.first_child() {
-               if matcher.fuzzy_match(
-                   first_child.widget_name().as_str(), 
-                   &user_text.as_str()
-               ).is_some() {
-                   println!("this partially matches");
-               } 
-
-               /* while let Some(child) = list_box.first_child() {
-                   if child == child.next_sibling().unwrap() {
-                       list_box.remove(&child)
-                   } else {
-                       println!("no match");
-                       break
-                   }
-               } */
-
-           }
+       let captured_instance = instance_hash.get(&user_text);
+       if matcher.fuzzy_match(
+           captured_instance.unwrap_or(&user_text.to_string()),
+           &user_text.as_str()
+       ).is_some() {
+               let some_entry = Some(entry);
+               if some_entry.is_some() {
+                   let concat = entry.text().to_string() + &String::from("Yoooo");
+                   let lbl = Label::new(Some(&concat));
+                   let lbr = ListBoxRow::new();
+                   lbr.set_child(Some(&lbl));
+                   list_box.prepend(&lbr);
+               }
+       } 
        list_box.select_row(list_box.row_at_index(0).as_ref());
 
        if let Some(lb_row) = list_box.row_at_index(0) {
