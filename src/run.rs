@@ -1,6 +1,6 @@
 use crate::{
     actions::on_app_activate,
-    utils::AppField,
+    utils::{AppField, fst}
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
@@ -9,8 +9,6 @@ use gtk4::{
 };
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
 use std::collections::HashMap;
-use fst::{Set, IntoStreamer, Streamer};
-use fst::automaton::{Levenshtein, LevenshteinError};
 
 pub fn draw_ui(application: &Application) {
     let draw_window = ApplicationWindow::builder()
@@ -99,6 +97,7 @@ pub fn draw_ui(application: &Application) {
         };
         let app_name = app.display_name().to_string();
         app_names_vec.push(app_name.clone());
+        app_names_vec.sort();
         instance_hash.insert(app_name.clone(), app_name.clone());
 
         contained_app.update_fields();
@@ -121,10 +120,7 @@ pub fn draw_ui(application: &Application) {
        let matcher = SkimMatcherV2::default();
        
        // create a set 
-       let fst_set = Set::from_iter(app_names_vec.clone());
-       let lev = Levenshtein::new(&user_text, 1);
-
-       let mut stream = fst_set.search(lev).into_stream();
+       fst(user_text.clone(), app_names_vec.clone()).expect("uh oh");
 
        let captured_instance = instance_hash.get(&user_text);
        if matcher.fuzzy_match(

@@ -2,6 +2,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{gio, prelude::AppInfoExt};
 use std::process::Command;
+use fst::{IntoStreamer, automaton::Levenshtein, Set};
 
 #[derive(Debug, Clone)]
 pub struct AppField {
@@ -56,4 +57,16 @@ pub fn sorting_function(app_name: String, user_text: String) {
     if matcher.fuzzy_match(&app_name, &user_text).is_some() {
         println!("///////////////////theres a match");
     };
+}
+
+
+pub fn fst(user_text: String, app_names_vec: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
+   let fst_set = Set::from_iter(app_names_vec.clone())?;
+   let lev = Levenshtein::new(&user_text, 1)?;
+
+   let stream = fst_set.search(lev).into_stream();
+
+   let keys = stream.into_strs()?;
+   println!("{:?}", keys);
+   Ok(())
 }
