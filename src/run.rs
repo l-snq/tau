@@ -119,31 +119,10 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        let matcher = SkimMatcherV2::default();
        
-       // create a set 
-       fst(user_text.clone(), app_names_vec.clone()).expect("uh oh");
+       // create a set and then do some extra magic 
+       fst(user_text.clone(), app_names_vec.clone(), list_box, entry).expect("uh oh");
 
        let captured_instance = instance_hash.get(&user_text);
-       if matcher.fuzzy_match(
-           captured_instance.unwrap_or(&user_text),
-           &user_text.as_str()
-       ).is_some() {
-               list_box.remove_all();
-               let some_entry = Some(entry);
-               if some_entry.is_some() {
-                   if instance_hash.contains_key(&user_text) {
-                       let lbl = Label::new(Some(&entry.text().to_string()));
-                       let lbr = ListBoxRow::new();
-                       lbr.set_child(Some(&lbl));
-                       list_box.prepend(&lbr);
-                   }
-               }
-       } 
-
-       list_box.select_row(list_box.row_at_index(0).as_ref());
-
-       if let Some(lb_row) = list_box.row_at_index(0) {
-           lb_row.changed();
-       }
     }));
 
     entry.connect_activate(clone!(@weak list_box => move |entry| {

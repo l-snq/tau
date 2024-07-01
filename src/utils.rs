@@ -1,8 +1,9 @@
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
-use gtk4::{gio, prelude::AppInfoExt};
+use gtk4::{gio, prelude::AppInfoExt, prelude::{ListBoxRowExt, *}, Label, SearchEntry, ListBox, ListBoxRow};
 use std::process::Command;
 use fst::{IntoStreamer, automaton::Levenshtein, Set};
+use regex_automata::dense;
 
 #[derive(Debug, Clone)]
 pub struct AppField {
@@ -60,13 +61,34 @@ pub fn sorting_function(app_name: String, user_text: String) {
 }
 
 
-pub fn fst(user_text: String, app_names_vec: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
    let fst_set = Set::from_iter(app_names_vec.clone())?;
+   let mut pattern = r"(i?)".to_owned();
+   pattern.push_str(&user_text);
    let lev = Levenshtein::new(&user_text, 1)?;
+   let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
 
-   let stream = fst_set.search(lev).into_stream();
+   lb.remove_all();
+   let some_entry = Some(s_ent);
+   // this is to prevent creating new entries when search is cleared
+   
 
-   let keys = stream.into_strs()?;
-   println!("{:?}", keys);
+   let stream = Some(fst_set.search(dfa).into_stream());
+
+   if stream.is_some() {
+       if some_entry.is_some() {
+           let lbl = Label::new(Some(&s_ent.text().to_string()));
+           let lbr = ListBoxRow::new();
+           lbr.set_child(Some(&lbl));
+           lb.prepend(&lbr);
+       }
+   }
+
+   lb.select_row(lb.row_at_index(0).as_ref());
+
+   if let Some(lb_row) = lb.row_at_index(0) {
+       lb_row.changed();
+   }
+
    Ok(())
 }
