@@ -73,15 +73,15 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    // this is to prevent creating new entries when search is cleared
    
 
-   let stream = Some(fst_set.search(dfa).into_stream());
+   let stream = fst_set.search(dfa).into_stream();
+   let keys = stream.into_strs();
 
-   if stream.is_some() {
-       if some_entry.is_some() {
-           let lbl = Label::new(Some(&s_ent.text().to_string()));
+   if some_entry.is_some() {
+
+           let lbl = Label::new(Some("somehting")); // replace this with the right thing
            let lbr = ListBoxRow::new();
            lbr.set_child(Some(&lbl));
            lb.prepend(&lbr);
-       }
    }
 
    lb.select_row(lb.row_at_index(0).as_ref());
