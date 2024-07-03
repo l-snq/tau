@@ -96,7 +96,7 @@ pub fn draw_ui(application: &Application) {
             id: Some(app_id),
         };
         let app_name = app.display_name().to_string();
-        app_names_vec.push(app_name.clone());
+        app_names_vec.push(app_name.to_lowercase().clone());
         app_names_vec.sort();
         instance_hash.insert(app_name.clone(), app_name.clone());
 
