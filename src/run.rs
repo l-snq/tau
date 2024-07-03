@@ -117,12 +117,9 @@ pub fn draw_ui(application: &Application) {
            .text()
            .to_string()
            .to_lowercase();
-       let matcher = SkimMatcherV2::default();
        
        // create a set and then do some extra magic 
        fst(user_text.clone(), app_names_vec.clone(), list_box, entry).expect("uh oh");
-
-       let captured_instance = instance_hash.get(&user_text);
     }));
 
     entry.connect_activate(clone!(@weak list_box => move |entry| {
@@ -149,12 +146,8 @@ pub fn draw_ui(application: &Application) {
    }));
 
    entry.connect_stop_search(clone!(@weak list_box,=> move |_|{
-        // list_box.remove_all();
         std::process::exit(0);
    }));
-   // listbox.connect_row_activated
-   // listbox.connect_row_selected
-   // do some magic with these guys
 
     scrolled_window.set_child(Some(&parent_box));
 

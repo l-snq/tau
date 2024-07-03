@@ -3,7 +3,6 @@ use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{gio, prelude::AppInfoExt, prelude::{ListBoxRowExt, *}, Label, SearchEntry, ListBox, ListBoxRow};
 use std::process::Command;
 use fst::{IntoStreamer, automaton::Levenshtein, Set};
-use regex_automata::dense;
 
 #[derive(Debug, Clone)]
 pub struct AppField {
@@ -66,28 +65,17 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    let mut pattern = r"(i?)".to_owned();
    pattern.push_str(&user_text);
    let lev = Levenshtein::new(&user_text, 3)?;
-   let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
 
    lb.remove_all();
    let some_entry = Some(s_ent);
-   // this is to prevent creating new entries when search is cleared
-   
-
    let stream = fst_set.search(lev).into_stream();
    let keys = stream.into_strs().unwrap_or_default(); // this returns a Vec<String>
-   println!("{:?}", fst_set);
-   println!("~~~~{:?}", keys);
 
-   //let popped_value = keys?.clone().pop().unwrap_or_default();
 
    if some_entry.is_some() {
-
-
-        let matcher = SkimMatcherV2::default();
-
            for i in keys {
                let item = i.to_owned();
-               let lbl = Label::new(Some(&item)); // replace this with the right thing
+               let lbl = Label::new(Some(&item)); 
                let lbr = ListBoxRow::new();
                lbr.set_child(Some(&lbl));
                lb.prepend(&lbr);
