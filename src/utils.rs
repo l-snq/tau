@@ -65,7 +65,7 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    let fst_set = Set::from_iter(app_names_vec.clone())?;
    let mut pattern = r"(i?)".to_owned();
    pattern.push_str(&user_text);
-   let lev = Levenshtein::new(&user_text, 1)?;
+   let lev = Levenshtein::new(&user_text, 3)?;
    let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
 
    lb.remove_all();
@@ -73,22 +73,26 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    // this is to prevent creating new entries when search is cleared
    
 
-   let stream = fst_set.search(dfa).into_stream();
-   let keys = stream.into_strs(); // this returns a Vec<String>
+   let stream = fst_set.search(lev).into_stream();
+   let keys = stream.into_strs().unwrap_or_default(); // this returns a Vec<String>
    println!("{:?}", fst_set);
    println!("~~~~{:?}", keys);
 
-   let popped_value = keys?.pop().unwrap_or_default();
+   //let popped_value = keys?.clone().pop().unwrap_or_default();
 
    if some_entry.is_some() {
 
-       if popped_value.partial_cmp(&user_text).is_some() {
-           let lbl = Label::new(Some(&popped_value)); // replace this with the right thing
-           let lbr = ListBoxRow::new();
-           lbr.set_child(Some(&lbl));
-           lb.prepend(&lbr);
 
-       }
+        let matcher = SkimMatcherV2::default();
+
+           for i in keys {
+               let item = i.to_owned();
+               let lbl = Label::new(Some(&item)); // replace this with the right thing
+               let lbr = ListBoxRow::new();
+               lbr.set_child(Some(&lbl));
+               lb.prepend(&lbr);
+
+           }
    }
 
    lb.select_row(lb.row_at_index(0).as_ref());
