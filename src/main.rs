@@ -1,7 +1,6 @@
 use gtk4::{glib, prelude::*, Application};
 
 pub mod actions;
-pub mod input;
 pub mod run;
 pub mod utils;
 
