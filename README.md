@@ -1,14 +1,19 @@
-# TAU. An application launcher made for first class Wayland support
+# TAU. 
+An application launcher made for wlroots based compositors. 
 
-I mainly have wanted to make this because there's
-really not many actively maintained wayland app
-launcher alternatives to rofi. This is my first fully open source project I am actively working on, so bare with my noobish skills, and of course contributions are encouraged! :)
+## Instructions:
 
-## Wayland support, and full customization.
+### Requirements:
+1. gtk4 installed
+2. gtk4-layer-shell installed
 
-Something that a lot of these awesome app launchers
-do is allow for loads of customization. I want to
-be able to set up the infrastructure of this app so
-that it is incredibly easy to modify, with css for
-styling so people can quickly learn, even if they
-don't have programming experience.
+
+### Building steps:
+
+1. Clone this repo `git clone https://github.com/l-snq/tau`
+2. `cd` into the repo and run: ``cargo run`
+
+
+## Contributions:
+
+Open a PR! This is my first open sourced project, so feel free to contribute :)
