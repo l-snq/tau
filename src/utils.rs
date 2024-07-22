@@ -68,11 +68,11 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    pattern.push_str(&user_text);
    let lev = Levenshtein::new(&user_text, 3)?;
 
+   println!("{}", pattern);
    lb.remove_all();
    let some_entry = Some(s_ent);
-   let stream = fst_set.search(dfa).into_stream();
+   let stream = fst_set.search(lev).into_stream();
    let keys = stream.into_strs().unwrap_or_default(); // this returns a Vec<String>
-
 
    if some_entry.is_some() {
            for i in keys {
@@ -81,7 +81,6 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
                let lbr = ListBoxRow::new();
                lbr.set_child(Some(&lbl));
                lb.prepend(&lbr);
-
            }
    }
 
