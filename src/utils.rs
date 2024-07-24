@@ -79,7 +79,6 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
                let lbr = ListBoxRow::new();
                lbr.set_child(Some(&lbl));
                lb.prepend(&lbr);
-
            }
    }
 

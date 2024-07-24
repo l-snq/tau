@@ -101,6 +101,7 @@ pub fn draw_ui(application: &Application) {
         instance_hash.insert(app_name.clone(), app_name.clone());
 
         contained_app.update_fields();
+	list_box.hide();
     }
     parent_box.prepend(&entry);
 
@@ -118,6 +119,7 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
        
+       list_box.show();
        // create a set and then do some extra magic 
        fst(user_text.clone(), app_names_vec.clone(), list_box, entry).expect("uh oh");
     }));
