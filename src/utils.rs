@@ -9,9 +9,7 @@ use regex_automata::dense;
 pub struct AppField {
     pub app_name: String,
     pub app_info: Option<gio::AppInfo>,
-    pub id: Option<String>, // this is annoying. You have to unwrap it,
-                            // then turn it into a string,
-                            //AND THEN WRAP IT AGAIN
+    pub id: Option<String>,
 }
 
 impl AppField {
@@ -31,35 +29,13 @@ impl AppField {
 }
 
 pub fn string_to_command(input: &str) {
-    // this will take the string, to lowercase, and then remove any spaces with split(' ')
     let fms_str = &input.trim().to_lowercase();
 
-    println!("the string that is formatted= {:?}", &fms_str);
     let echo_command = Command::new(&fms_str)
         .spawn()
         .expect("something went wrong trying to read the command");
     let hello = echo_command.stdout;
 }
-
-// this shouldn't be used!!!! but im stashing it c:
-pub fn hash_match_and_launch_app(
-    widget: gtk4::Widget,
-    hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>,
-) {
-    let query_child = &widget;
-    let _hashed_child = hash.contains_key(query_child);
-    let captured_app = hash.get(query_child).unwrap();
-    let _launch_app = gio::AppInfo::launch(&captured_app, &[], gio::AppLaunchContext::NONE);
-}
-
-pub fn sorting_function(app_name: String, user_text: String) {
-    let matcher = SkimMatcherV2::default();
-
-    if matcher.fuzzy_match(&app_name, &user_text).is_some() {
-        println!("///////////////////theres a match");
-    };
-}
-
 
 pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
    let fst_set = Set::from_iter(app_names_vec.clone())?;
