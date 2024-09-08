@@ -41,7 +41,6 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    let fst_set = Set::from_iter(app_names_vec.clone())?;
    let mut pattern = r"(i?)".to_owned();
    let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
-   pattern.push_str(&user_text);
    let lev = Levenshtein::new(&user_text, 3)?;
 
    println!("{}", pattern);

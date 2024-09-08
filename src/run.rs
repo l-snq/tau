@@ -125,7 +125,6 @@ pub fn draw_ui(application: &Application) {
     entry.connect_activate(clone!(@weak list_box => move |entry| {
        let user_string = entry.text().to_string();
        let apps = gio::AppInfo::all();
-       // if row index 0, row.activate();
        for app in apps {
            let app_name = app.display_name().to_string();
            let app_id = app.id().unwrap().to_string();
