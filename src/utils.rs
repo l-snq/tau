@@ -63,16 +63,15 @@ pub fn sorting_function(app_name: String, user_text: String) {
 
 pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
    let fst_set = Set::from_iter(app_names_vec.clone())?;
-   let mut pattern = r"(i?)".to_owned();
-   let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
-   pattern.push_str(&user_text);
-   let lev = Levenshtein::new(&user_text, 3)?;
+   //let pattern = format!(r"(?i){}", regex::escape(&user_text));
+   let re = &user_text;
+   let dfa = dense::Builder::new().anchored(true).build(&re).unwrap();
+   let lev = Levenshtein::new(&user_text, 2)?;
 
    lb.remove_all();
    let some_entry = Some(s_ent);
-   let stream = fst_set.search(dfa).into_stream();
+   let stream = fst_set.search(lev).into_stream();
    let keys = stream.into_strs().unwrap_or_default(); // this returns a Vec<String>
-
 
    if some_entry.is_some() {
            for i in keys {
@@ -81,7 +80,6 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
                let lbr = ListBoxRow::new();
                lbr.set_child(Some(&lbl));
                lb.prepend(&lbr);
-
            }
    }
 
