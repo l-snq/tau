@@ -1,6 +1,6 @@
 use crate::{
     actions::on_app_activate,
-    utils::{AppField, fst}
+    utils::{fst, sort_app_vec, AppField}
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
@@ -104,8 +104,6 @@ pub fn draw_ui(application: &Application) {
     }
     parent_box.prepend(&entry);
 
-
-
     list_box.set_focusable(true);
     // continue some search entry logic here
     entry.connect_search_changed(clone!(
@@ -117,6 +115,8 @@ pub fn draw_ui(application: &Application) {
            .text()
            .to_string()
            .to_lowercase();
+     
+       sort_app_vec(user_text.clone(), app_names_vec.clone());
        
        // create a set and then do some extra magic 
        fst(user_text.clone(), app_names_vec.clone(), list_box, entry).expect("uh oh");
