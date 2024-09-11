@@ -83,4 +83,11 @@ pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
     } else {
         println!("no match");
     }
+
+    sort_app_vec_into_rows(search_text, app_string);
+}
+
+pub fn sort_app_vec_into_rows(search_text: String, app_vec_string: String) {
+    app_vec_string.split("+");
+    println!("{}***", app_vec_string);
 }
