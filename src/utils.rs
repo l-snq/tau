@@ -3,14 +3,13 @@ use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{gio, prelude::AppInfoExt, prelude::{ListBoxRowExt, *}, Label, SearchEntry, ListBox, ListBoxRow};
 use std::process::Command;
 use fst::{IntoStreamer, automaton::Levenshtein, Set};
+use regex_automata::dense;
 
 #[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
     pub app_info: Option<gio::AppInfo>,
-    pub id: Option<String>, // this is annoying. You have to unwrap it,
-                            // then turn it into a string,
-                            //AND THEN WRAP IT AGAIN
+    pub id: Option<String>,
 }
 
 impl AppField {
@@ -30,47 +29,25 @@ impl AppField {
 }
 
 pub fn string_to_command(input: &str) {
-    // this will take the string, to lowercase, and then remove any spaces with split(' ')
     let fms_str = &input.trim().to_lowercase();
 
-    println!("the string that is formatted= {:?}", &fms_str);
     let echo_command = Command::new(&fms_str)
         .spawn()
         .expect("something went wrong trying to read the command");
     let hello = echo_command.stdout;
 }
 
-// this shouldn't be used!!!! but im stashing it c:
-pub fn hash_match_and_launch_app(
-    widget: gtk4::Widget,
-    hash: &std::collections::HashMap<gtk4::Box, gio::AppInfo>,
-) {
-    let query_child = &widget;
-    let _hashed_child = hash.contains_key(query_child);
-    let captured_app = hash.get(query_child).unwrap();
-    let _launch_app = gio::AppInfo::launch(&captured_app, &[], gio::AppLaunchContext::NONE);
-}
-
-pub fn sorting_function(app_name: String, user_text: String) {
-    let matcher = SkimMatcherV2::default();
-
-    if matcher.fuzzy_match(&app_name, &user_text).is_some() {
-        println!("///////////////////theres a match");
-    };
-}
-
-
 pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
    let fst_set = Set::from_iter(app_names_vec.clone())?;
    let mut pattern = r"(i?)".to_owned();
-   pattern.push_str(&user_text);
+   let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
    let lev = Levenshtein::new(&user_text, 3)?;
 
+   println!("{}", pattern);
    lb.remove_all();
    let some_entry = Some(s_ent);
    let stream = fst_set.search(lev).into_stream();
    let keys = stream.into_strs().unwrap_or_default(); // this returns a Vec<String>
-
 
    if some_entry.is_some() {
            for i in keys {
@@ -79,7 +56,6 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
                let lbr = ListBoxRow::new();
                lbr.set_child(Some(&lbl));
                lb.prepend(&lbr);
-
            }
    }
 
@@ -90,4 +66,28 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    }
 
    Ok(())
+}
+
+pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
+    // do the fuzzy
+    // take all of the results in the app vec, and push them into a singular string
+    // and clean them up 
+    let mut app_string = String::new();
+    for i in app_vec {
+        app_string.push_str(&i);
+        app_string.push_str("+");
+    }
+    let matcher = SkimMatcherV2::default();
+    if matcher.fuzzy_match(&app_string, &search_text).is_some() {
+        println!("there's a match!");
+    } else {
+        println!("no match");
+    }
+
+    sort_app_vec_into_rows(search_text, app_string);
+}
+
+pub fn sort_app_vec_into_rows(search_text: String, app_vec_string: String) {
+    app_vec_string.split("+");
+    println!("{}***", app_vec_string);
 }
