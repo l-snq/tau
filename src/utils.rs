@@ -47,7 +47,7 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    lb.remove_all();
    let some_entry = Some(s_ent);
    let stream = fst_set.search(lev).into_stream();
-   let keys = stream.into_strs().unwrap_or_default(); // this returns a Vec<String>
+   let keys = stream.into_strs().unwrap_or_default(); 
 
    if some_entry.is_some() {
            for i in keys {
@@ -78,10 +78,8 @@ pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
         app_string.push_str("+");
     }
     let matcher = SkimMatcherV2::default();
-    if matcher.fuzzy_match(&app_string, &search_text).is_some() {
-        println!("there's a match!");
-    } else {
-        println!("no match");
+    if let Some(fuzzy_value) = matcher.fuzzy_match(&app_string, &search_text) {
+        println("{:?}", fuzzy_value);
     }
 
     sort_app_vec_into_rows(search_text, app_string);
