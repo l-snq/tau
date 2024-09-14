@@ -79,7 +79,7 @@ pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
     }
     let matcher = SkimMatcherV2::default();
     if let Some(fuzzy_value) = matcher.fuzzy_match(&app_string, &search_text) {
-        println("{:?}", fuzzy_value);
+        println!("{:?}", fuzzy_value);
     }
 
     sort_app_vec_into_rows(search_text, app_string);
