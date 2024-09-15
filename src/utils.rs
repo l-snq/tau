@@ -69,7 +69,6 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
 }
 
 pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
-    // do the fuzzy
     // take all of the results in the app vec, and push them into a singular string
     // and clean them up 
     let mut app_string = String::new();
