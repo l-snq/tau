@@ -39,7 +39,7 @@ pub fn string_to_command(input: &str) {
 
 pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
    let fst_set = Set::from_iter(app_names_vec.clone())?;
-   let mut pattern = r"(i?)".to_owned();
+   let pattern = r"(i?)";
    let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
    let lev = Levenshtein::new(&user_text, 3)?;
 
@@ -80,11 +80,16 @@ pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
     if let Some(fuzzy_value) = matcher.fuzzy_match(&app_string, &search_text) {
         println!("{:?}", fuzzy_value);
     }
-
-    sort_app_vec_into_rows(search_text, app_string);
 }
 
-pub fn sort_app_vec_into_rows(search_text: String, app_vec_string: String) {
-    app_vec_string.split("+");
-    println!("{}***", app_vec_string);
+pub fn sanitize_app_names(app_name_vector: Vec<String>) -> Vec<String> {
+    let mut sanitized_names = app_name_vector.clone();
+    sanitized_names.sort();
+    sanitized_names.dedup();
+
+    for i in &sanitized_names {
+       i.replace(" ", "+");
+    }
+
+    sanitized_names
 }
