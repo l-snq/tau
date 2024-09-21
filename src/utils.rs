@@ -88,7 +88,7 @@ pub fn sanitize_app_names(app_name_vector: Vec<String>) -> Vec<String> {
     sanitized_names.dedup();
 
     for i in &sanitized_names {
-       i.replace(" ", "+");
+       i.replacen(" ", "+", 10);
     }
     println!("{:?}", sanitized_names);
 
