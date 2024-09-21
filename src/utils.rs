@@ -78,7 +78,7 @@ pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
     }
     let matcher = SkimMatcherV2::default();
     if let Some(fuzzy_value) = matcher.fuzzy_match(&app_string, &search_text) {
-        println!("{:?}", fuzzy_value);
+        //do something here
     }
 }
 
@@ -88,9 +88,8 @@ pub fn sanitize_app_names(app_name_vector: Vec<String>) -> Vec<String> {
     sanitized_names.dedup();
 
     for i in &sanitized_names {
-       i.replacen(" ", "+", 10);
+       let _ = i.replacen("s", "+", 90);
     }
-    println!("{:?}", sanitized_names);
 
     sanitized_names
 }
