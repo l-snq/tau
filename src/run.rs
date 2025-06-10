@@ -64,7 +64,6 @@ pub fn draw_ui(application: &Application) {
 
     for app in &apps {
         let app_name = app.display_name().to_string();
-        app.
 
         let icon_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
         icon_box.grab_focus();
