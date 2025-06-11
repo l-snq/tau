@@ -1,11 +1,11 @@
 use crate::{
     actions::on_app_activate,
-    utils::{fst, sanitize_app_names, AppField}
+    utils::{fst, sanitize_app_names, AppField, APPINFO}
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{
-    gio, glib::clone, prelude::*, Application, ApplicationWindow, IconTheme, SearchBar, SearchEntry};
+    gio, glib::clone, prelude::*, Application, ApplicationWindow, IconTheme, SearchBar, SearchEntry, TextDirection, Image, IconLookupFlags};
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
 use std::collections::HashMap;
 
@@ -39,6 +39,7 @@ pub fn draw_ui(application: &Application) {
     // App_Display_Name<String>
     // App_Launch_command<URI?>
     let all_apps: Vec<gio::AppInfo> = apps;
+    let mut app_list_vec: Vec<APPINFO> = Vec::new();
     let matcher = SkimMatcherV2::default();
 
     let bar = SearchBar::builder()
@@ -62,7 +63,13 @@ pub fn draw_ui(application: &Application) {
 
     let mut app_names_vec: Vec<String> = vec![];
 
-    for app in &apps {
+    for app in apps {
+        let appinfoInit = APPINFO {
+            name: app.display_name().to_string(),
+            app_info: Some(app.clone()),
+        };
+        app_list_vec.push(appinfoInit);
+
         let app_name = app.display_name().to_string();
 
         let icon_box = gtk4::Box::new(gtk4::Orientation::Horizontal, 20);
@@ -133,13 +140,13 @@ pub fn draw_ui(application: &Application) {
        let user_string = entry.text().to_string();
        let apps = gio::AppInfo::all();
 
-       let filtered_apps: Vec<gio::AppInfo> = all_apps
+       /*(let filtered_apps: Vec<gio::AppInfo> = all_apps
            .iter()
            .filter_map(|app| {
                matcher.fuzzy_match(&app.app_name, &user_string)
                    .map(|score| (app, score))
            })
-           .collect();
+           .collect();*/
        for app in apps {
            let app_name = app.display_name().to_string();
            let app_id = app.id().unwrap().to_string();

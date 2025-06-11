@@ -6,6 +6,12 @@ use fst::{IntoStreamer, automaton::Levenshtein, Set};
 use regex_automata::dense;
 
 #[derive(Debug, Clone)]
+pub struct APPINFO {
+    pub name: String,
+    pub app_info: Option<gio::AppInfo>,
+}
+
+#[derive(Debug, Clone)]
 pub struct AppField {
     pub app_name: String,
     pub app_info: Option<gio::AppInfo>,
