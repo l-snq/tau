@@ -49,7 +49,6 @@ pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &S
    let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
    let lev = Levenshtein::new(&user_text, 3)?;
 
-   println!("{}", pattern);
    lb.remove_all();
    let some_entry = Some(s_ent);
    let stream = fst_set.search(lev).into_stream();

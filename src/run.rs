@@ -31,14 +31,12 @@ pub fn draw_ui(application: &Application) {
         .hscrollbar_policy(gtk4::PolicyType::Never)
         .build();
 
-    let mut hash = HashMap::new();
-    let mut instance_hash: HashMap<String, String> = HashMap::new();
-
     let apps = gio::AppInfo::all();
     // create a vec of structs that have the following fields:
     // App_Display_Name<String>
     // App_Launch_command<URI?>
-    let all_apps: Vec<gio::AppInfo> = apps;
+
+    //let all_apps: Vec<gio::AppInfo> = apps;
     let mut app_list_vec: Vec<APPINFO> = Vec::new();
     let matcher = SkimMatcherV2::default();
 
@@ -98,8 +96,6 @@ pub fn draw_ui(application: &Application) {
             }
         }
 
-        hash.insert(icon_box.clone(), app.clone());
-
         let app_id = app.id().unwrap().to_string();
         let contained_app = AppField {
             app_name: app_name.clone(),
@@ -109,7 +105,6 @@ pub fn draw_ui(application: &Application) {
         let app_name = app.display_name().to_string();
         app_names_vec.push(app_name.to_lowercase().clone());
         app_names_vec.sort();
-        instance_hash.insert(app_name.clone(), app_name.clone());
 
         contained_app.update_fields();
     }
@@ -120,7 +115,6 @@ pub fn draw_ui(application: &Application) {
     // continue some search entry logic here
     entry.connect_search_changed(clone!(
            @weak list_box, 
-           @strong instance_hash, 
            @strong app_names_vec
            => move |entry| {
        let user_text = entry
@@ -131,6 +125,7 @@ pub fn draw_ui(application: &Application) {
      
        //sort_app_vec(user_text.clone(), app_names_vec.clone());
        
+       println!("{:?}", app_list_vec);
        // create a set and then do some extra magic 
        fst(user_text.clone(), sanitize_app_names(app_names_vec.clone())
 , list_box, entry).expect("uh oh");
