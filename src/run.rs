@@ -1,6 +1,6 @@
 use crate::{
     actions::on_app_activate,
-    utils::{fst, sanitize_app_names, AppField, APPINFO}
+    utils::{fst_worker, sanitize_app_names, AppField, APPINFO}
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
@@ -115,19 +115,21 @@ pub fn draw_ui(application: &Application) {
     // continue some search entry logic here
     entry.connect_search_changed(clone!(
            @weak list_box, 
-           @strong app_names_vec
+           @strong app_list_vec 
            => move |entry| {
+
        let user_text = entry
            .text()
            .to_string()
            .to_lowercase();
         sanitize_app_names(app_names_vec.clone());
+        //app_list_vec.iter().fil
      
        //sort_app_vec(user_text.clone(), app_names_vec.clone());
        
        println!("{:?}", app_list_vec);
        // create a set and then do some extra magic 
-       fst(user_text.clone(), sanitize_app_names(app_names_vec.clone())
+       fst_worker(user_text.clone(), sanitize_app_names(app_names_vec.clone())
 , list_box, entry).expect("uh oh");
     }));
 

@@ -43,7 +43,7 @@ pub fn string_to_command(input: &str) {
     let hello = echo_command.stdout;
 }
 
-pub fn fst(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
+pub fn fst_worker(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
    let fst_set = Set::from_iter(app_names_vec.clone())?;
    let pattern = r"(i?)";
    let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
