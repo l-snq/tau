@@ -11,28 +11,6 @@ pub struct APPINFO {
     pub app_info: Option<gio::AppInfo>,
 }
 
-#[derive(Debug, Clone)]
-pub struct AppField {
-    pub app_name: String,
-    pub app_info: Option<gio::AppInfo>,
-    pub id: Option<String>,
-}
-
-impl AppField {
-    pub fn new(info: gio::AppInfo) -> Self {
-        Self {
-            app_name: String::new(),
-            app_info: Some(info),
-            id: Some(String::new()),
-        }
-    }
-
-    pub fn update_fields(&self) {
-        let _ = self.app_name.clone();
-        let _ = self.app_info.clone();
-        let _ = self.id.clone();
-    }
-}
 
 pub fn string_to_command(input: &str) {
     let fms_str = &input.trim().to_lowercase();

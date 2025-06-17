@@ -1,6 +1,6 @@
 use crate::{
     actions::on_app_activate,
-    utils::{fst_worker, sanitize_app_names, AppField, APPINFO}
+    utils::{fst_worker, sanitize_app_names, APPINFO}
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
@@ -98,16 +98,9 @@ pub fn draw_ui(application: &Application) {
         }
 
         let app_id = app.id().unwrap().to_string();
-        let contained_app = AppField {
-            app_name: app_name.clone(),
-            app_info: Some(app.clone()),
-            id: Some(app_id),
-        };
         let app_name = app.display_name().to_string();
         app_names_vec.push(app_name.to_lowercase().clone());
         app_names_vec.sort();
-
-        contained_app.update_fields();
     }
     parent_box.prepend(&entry);
 
@@ -148,13 +141,8 @@ pub fn draw_ui(application: &Application) {
        for app in apps {
            let app_name = app.display_name().to_string();
            let app_id = app.id().unwrap().to_string();
-           let app_struct = AppField {
-               app_name,
-               app_info: Some(app.clone()),
-               id: Some(app_id),
-           };
            let matcher = SkimMatcherV2::default();
-           if matcher.fuzzy_match(app_struct.app_name.as_str(), user_string.clone().as_str()).is_some() {
+           if matcher.fuzzy_match(app_name.as_str(), user_string.clone().as_str()).is_some() {
                let launch_command = gio::AppInfo::launch(
                    &app, 
                    &[], 
