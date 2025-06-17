@@ -62,11 +62,11 @@ pub fn draw_ui(application: &Application) {
     let mut app_names_vec: Vec<String> = vec![];
 
     for app in apps {
-        let appinfoInit = APPINFO {
+        let appinfo_init = APPINFO {
             name: app.display_name().to_string(),
             app_info: Some(app.clone()),
         };
-        app_list_vec.push(appinfoInit);
+        app_list_vec.push(appinfo_init);
 
         let app_name = app.display_name().to_string();
 
