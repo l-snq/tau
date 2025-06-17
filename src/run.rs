@@ -117,9 +117,7 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
         sanitize_app_names(app_names_vec.clone());
-        //app_list_vec.iter().fil
-     
-       //sort_app_vec(user_text.clone(), app_names_vec.clone());
+       let mut applist_iter = app_list_vec.iter();
        
        println!("{:?}", app_list_vec);
        // create a set and then do some extra magic 
