@@ -82,6 +82,7 @@ pub fn draw_ui(application: &Application) {
         lbr.set_child(Some(&lbr_label));
         list_box.prepend(&lbr);
 
+        // icon stuff
         if let Some(gtk_icon_name) = app.icon() {
             let some_icon_theme = Some(icon_theme.lookup_by_gicon(
                 &gtk_icon_name,
