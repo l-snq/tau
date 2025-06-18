@@ -7,7 +7,6 @@ use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{
     gio, glib::clone, prelude::*, Application, ApplicationWindow, IconTheme, SearchBar, SearchEntry, TextDirection, Image, IconLookupFlags};
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
-use std::collections::HashMap;
 
 pub fn draw_ui(application: &Application) {
     let draw_window = ApplicationWindow::builder()
@@ -117,7 +116,7 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
         sanitize_app_names(app_names_vec.clone());
-       let mut applist_iter = app_list_vec.iter();
+       let mut app_list_iter = app_list_vec.iter();
        
        println!("{:?}", app_list_vec);
        // create a set and then do some extra magic 
