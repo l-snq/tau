@@ -51,20 +51,6 @@ pub fn fst_worker(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_
    Ok(())
 }
 
-pub fn sort_app_vec(search_text: String, app_vec: Vec<String> ) {
-    // take all of the results in the app vec, and push them into a singular string
-    // and clean them up 
-    let mut app_string = String::new();
-    for i in app_vec {
-        app_string.push_str(&i);
-        app_string.push_str("+");
-    }
-    let matcher = SkimMatcherV2::default();
-    if let Some(fuzzy_value) = matcher.fuzzy_match(&app_string, &search_text) {
-        //do something here
-    }
-}
-
 pub fn sanitize_app_names(app_name_vector: Vec<String>) -> Vec<String> {
     let mut sanitized_names = app_name_vector.clone();
     sanitized_names.sort();
