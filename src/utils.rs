@@ -25,7 +25,7 @@ pub fn fst_worker(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_
    let fst_set = Set::from_iter(app_names_vec.clone())?;
    let pattern = r"(i?)";
    let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
-   let lev = Levenshtein::new(&user_text, 3)?;
+   let lev = Levenshtein::new(&user_text, 2)?;
 
    lb.remove_all();
    let some_entry = Some(s_ent);

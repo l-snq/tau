@@ -114,9 +114,18 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
         sanitize_app_names(app_names_vec.clone());
-       let mut app_list_iter = app_list_vec.iter();
-       
-       println!("{:?}", app_list_vec);
+       let mut app_list_iter: Vec<(usize, &APPINFO)> = app_list_vec
+           .iter()
+           .filter_map(|app| {
+               let name_lower = app.name.to_lowercase();
+               if let Some(pos) = name_lower.find(&user_text) {
+                   Some((pos, app))
+               } else {
+                   None
+               }
+           })
+           .collect();
+       app_list_iter.sort_by_key(|&(pos, _)| pos);
        // create a set and then do some extra magic 
        fst_worker(user_text.clone(), sanitize_app_names(app_names_vec.clone())
 , list_box, entry).expect("uh oh");
