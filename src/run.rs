@@ -96,8 +96,6 @@ pub fn draw_ui(application: &Application) {
             }
         }
 
-        let app_id = app.id().unwrap().to_string();
-        let app_name = app.display_name().to_string();
         app_names_vec.push(app_name.to_lowercase().clone());
         app_names_vec.sort();
     }
