@@ -144,7 +144,6 @@ pub fn draw_ui(application: &Application) {
            .collect();*/
        for app in apps {
            let app_name = app.display_name().to_string();
-           let app_id = app.id().unwrap().to_string();
            let matcher = SkimMatcherV2::default();
            if matcher.fuzzy_match(app_name.as_str(), user_string.clone().as_str()).is_some() {
                let launch_command = gio::AppInfo::launch(
