@@ -1,9 +1,6 @@
-use fuzzy_matcher::skim::SkimMatcherV2;
-use fuzzy_matcher::FuzzyMatcher;
-use gtk4::{gio, prelude::AppInfoExt, prelude::{ListBoxRowExt, *}, Label, SearchEntry, ListBox, ListBoxRow};
+use gtk4::{gio, prelude::ListBoxRowExt, Label, SearchEntry, ListBox, ListBoxRow};
 use std::process::Command;
 use fst::{IntoStreamer, automaton::Levenshtein, Set};
-use regex_automata::dense;
 
 #[derive(Debug, Clone)]
 pub struct APPINFO {
@@ -18,13 +15,11 @@ pub fn string_to_command(input: &str) {
     let echo_command = Command::new(&fms_str)
         .spawn()
         .expect("something went wrong trying to read the command");
-    let hello = echo_command.stdout;
+    let _hello = echo_command.stdout;
 }
 
 pub fn fst_worker(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
-   let fst_set = Set::from_iter(app_names_vec.clone())?;
-   let pattern = r"(i?)";
-   let dfa = dense::Builder::new().anchored(true).build(&pattern).unwrap();
+   let fst_set = Set::from_iter(app_names_vec)?;
    let lev = Levenshtein::new(&user_text, 2)?;
 
    lb.remove_all();
@@ -51,14 +46,8 @@ pub fn fst_worker(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_
    Ok(())
 }
 
-pub fn sanitize_app_names(app_name_vector: Vec<String>) -> Vec<String> {
-    let mut sanitized_names = app_name_vector.clone();
-    sanitized_names.sort();
-    sanitized_names.dedup();
-
-    for i in &sanitized_names {
-       let _ = i.replacen("s", "+", 90);
-    }
-
-    sanitized_names
+pub fn sanitize_app_names(mut app_name_vector: Vec<String>) -> Vec<String> {
+    app_name_vector.sort();
+    app_name_vector.dedup();
+    app_name_vector
 }

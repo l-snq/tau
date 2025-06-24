@@ -7,6 +7,7 @@ use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{
     gio, glib::clone, prelude::*, Application, ApplicationWindow, IconTheme, SearchBar, SearchEntry, TextDirection, Image, IconLookupFlags};
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
+use std::rc::Rc;
 
 pub fn draw_ui(application: &Application) {
     let draw_window = ApplicationWindow::builder()
@@ -31,13 +32,9 @@ pub fn draw_ui(application: &Application) {
         .build();
 
     let apps = gio::AppInfo::all();
-    // create a vec of structs that have the following fields:
-    // App_Display_Name<String>
-    // App_Launch_command<URI?>
-
-    //let all_apps: Vec<gio::AppInfo> = apps;
+    let apps_rc = Rc::new(apps);
     let mut app_list_vec: Vec<APPINFO> = Vec::new();
-    let matcher = SkimMatcherV2::default();
+    let matcher = Rc::new(SkimMatcherV2::default());
 
     let bar = SearchBar::builder()
         .valign(gtk4::Align::Start)
@@ -60,7 +57,7 @@ pub fn draw_ui(application: &Application) {
 
     let mut app_names_vec: Vec<String> = vec![];
 
-    for app in apps {
+    for app in apps_rc.iter() {
         let appinfo_init = APPINFO {
             name: app.display_name().to_string(),
             app_info: Some(app.clone()),
@@ -96,9 +93,9 @@ pub fn draw_ui(application: &Application) {
             }
         }
 
-        app_names_vec.push(app_name.to_lowercase().clone());
-        app_names_vec.sort();
+        app_names_vec.push(app_name.to_lowercase());
     }
+    app_names_vec.sort();
     parent_box.prepend(&entry);
 
     list_box.set_focusable(true);
@@ -106,7 +103,8 @@ pub fn draw_ui(application: &Application) {
     // continue some search entry logic here
     entry.connect_search_changed(clone!(
            @weak list_box, 
-           @strong app_list_vec 
+           @strong app_list_vec,
+           @strong matcher
            => move |entry| {
 
        let user_text = entry
@@ -131,22 +129,13 @@ pub fn draw_ui(application: &Application) {
 , list_box, entry).expect("uh oh");
     }));
 
-    entry.connect_activate(clone!(@weak list_box => move |entry| {
+    entry.connect_activate(clone!(@weak list_box, @strong apps_rc, @strong matcher => move |entry| {
        let user_string = entry.text().to_string();
-       let apps = gio::AppInfo::all();
 
-       /*(let filtered_apps: Vec<gio::AppInfo> = all_apps
-           .iter()
-           .filter_map(|app| {
-               matcher.fuzzy_match(&app.app_name, &user_string)
-                   .map(|score| (app, score))
-           })
-           .collect();*/
-       for app in apps {
+       for app in apps_rc.iter() {
            let app_name = app.display_name().to_string();
-           let matcher = SkimMatcherV2::default();
-           if matcher.fuzzy_match(app_name.as_str(), user_string.clone().as_str()).is_some() {
-               let launch_command = gio::AppInfo::launch(
+           if matcher.fuzzy_match(app_name.as_str(), user_string.as_str()).is_some() {
+               let _launch_command = gio::AppInfo::launch(
                    &app, 
                    &[], 
                    gio::AppLaunchContext::NONE);

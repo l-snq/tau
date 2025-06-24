@@ -8,14 +8,10 @@ edition = "2021"
 [dependencies]
 fst = { version = "0.4.7", features = ["levenshtein"]}
 fuzzy-matcher = "0.3.7"
-regex-automata = { version = "0.1.9", features = ["transducer"] }
 gio = "0.19.5"
 glib = "0.19.6"
 gtk4 = { version = "0.8.2", features = ["v4_12"] }
 gtk4-layer-shell = "0.3.0"
-regex = "1.10.4"
-winit = "0.30.0"
-xdg = "2.5.2"
 # look at clap for cli stuff
 
 [dependencies.uuid]
