@@ -18,6 +18,43 @@ pub fn string_to_command(input: &str) {
     let _hello = echo_command.stdout;
 }
 
+pub fn applist_search_iter(user_text: String, vec_appinfo: Vec<APPINFO>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
+
+   lb.remove_all();
+   let some_ent = Some(s_ent);
+   let mut app_list_iter: Vec<(usize, &APPINFO)> = vec_appinfo 
+       .iter()
+       .filter_map(|app| {
+           let name_lower = app.name.to_lowercase();
+           if let Some(pos) = name_lower.find(&user_text) {
+               Some((pos, app))
+           } else {
+               None
+           }
+       })
+       .collect();
+   app_list_iter.sort_by_key(|&(pos, _)| pos);
+
+   /*
+   if some_ent.is_some() {
+           for i in keys {
+               let item = i.to_owned();
+               let lbl = Label::new(Some(&item)); 
+               let lbr = ListBoxRow::new();
+               lbr.set_child(Some(&lbl));
+               lb.prepend(&lbr);
+           }
+   }*/
+
+   lb.select_row(lb.row_at_index(0).as_ref());
+
+   if let Some(lb_row) = lb.row_at_index(0) {
+       lb_row.changed();
+   }
+
+    Ok(())
+}
+
 pub fn fst_worker(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
    let fst_set = Set::from_iter(app_names_vec)?;
    let lev = Levenshtein::new(&user_text, 2)?;
