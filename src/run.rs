@@ -113,7 +113,7 @@ pub fn draw_ui(application: &Application) {
            .text()
            .to_string()
            .to_lowercase();
-        sanitize_app_names(app_names_vec.clone());
+       sanitize_app_names(app_names_vec.clone());
        let mut app_list_iter: Vec<(usize, &APPINFO)> = app_list_vec
            .iter()
            .filter_map(|app| {
