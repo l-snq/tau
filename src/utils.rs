@@ -27,6 +27,10 @@ pub fn applist_search_iter(user_text: String, vec_appinfo: Vec<APPINFO>, lb: Lis
        .filter_map(|app| {
            let name_lower = app.name.to_lowercase();
            if let Some(pos) = name_lower.find(&user_text) {
+               let lbl = Label::new(Some(&name));
+               let lbr = ListBoxRow::new();
+               lbr.set_child(Some(lbl));
+               lb.prepend(&lbr);
                Some((pos, app))
            } else {
                None
