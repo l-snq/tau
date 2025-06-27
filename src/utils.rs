@@ -1,6 +1,5 @@
 use gtk4::{gio, prelude::ListBoxRowExt, Label, SearchEntry, ListBox, ListBoxRow};
 use std::process::Command;
-use fst::{IntoStreamer, automaton::Levenshtein, Set};
 
 #[derive(Debug, Clone)]
 pub struct APPINFO {
