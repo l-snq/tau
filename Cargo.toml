@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-fst = { version = "0.4.7", features = ["levenshtein"]}
 fuzzy-matcher = "0.3.7"
 gio = "0.19.5"
 glib = "0.19.6"
