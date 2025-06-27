@@ -59,34 +59,6 @@ pub fn applist_search_iter(user_text: String, vec_appinfo: Vec<APPINFO>, lb: Lis
     Ok(())
 }
 
-pub fn fst_worker(user_text: String, app_names_vec: Vec<String>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
-   let fst_set = Set::from_iter(app_names_vec)?;
-   let lev = Levenshtein::new(&user_text, 2)?;
-
-   lb.remove_all();
-   let some_entry = Some(s_ent);
-   let stream = fst_set.search(lev).into_stream();
-   let keys = stream.into_strs().unwrap_or_default(); 
-
-   if some_entry.is_some() {
-           for i in keys {
-               let item = i.to_owned();
-               let lbl = Label::new(Some(&item)); 
-               let lbr = ListBoxRow::new();
-               lbr.set_child(Some(&lbl));
-               lb.prepend(&lbr);
-           }
-   }
-
-   lb.select_row(lb.row_at_index(0).as_ref());
-
-   if let Some(lb_row) = lb.row_at_index(0) {
-       lb_row.changed();
-   }
-
-   Ok(())
-}
-
 pub fn sanitize_app_names(mut app_name_vector: Vec<String>) -> Vec<String> {
     app_name_vector.sort();
     app_name_vector.dedup();

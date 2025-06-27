@@ -1,6 +1,6 @@
 use crate::{
     actions::on_app_activate,
-    utils::{applist_search_iter, fst_worker, sanitize_app_names, APPINFO}
+    utils::{applist_search_iter, sanitize_app_names, APPINFO}
 };
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
@@ -113,9 +113,6 @@ pub fn draw_ui(application: &Application) {
            .to_lowercase();
        sanitize_app_names(app_names_vec.clone());
        applist_search_iter(user_text.clone(), app_list_vec.clone(), list_box, entry).expect("something went wrong when trying to match results");
-       // create a set and then do some extra magic 
-       /*fst_worker(user_text.clone(), sanitize_app_names(app_names_vec.clone())
-, list_box, entry).expect("uh oh"); */
     }));
 
     entry.connect_activate(clone!(@weak list_box, @strong apps_rc, @strong matcher => move |entry| {
