@@ -17,10 +17,9 @@ pub fn string_to_command(input: &str) {
     let _hello = echo_command.stdout;
 }
 
-pub fn applist_search_iter(user_text: String, vec_appinfo: Vec<APPINFO>, lb: ListBox, s_ent: &SearchEntry) -> Result<(), Box<dyn std::error::Error>> {
+pub fn applist_search_iter(user_text: String, vec_appinfo: Vec<APPINFO>, lb: ListBox) -> Result<(), Box<dyn std::error::Error>> {
 
    lb.remove_all();
-   let some_ent = Some(s_ent);
    let mut app_list_iter: Vec<(usize, &APPINFO)> = vec_appinfo 
        .iter()
        .filter_map(|app| {
@@ -37,17 +36,6 @@ pub fn applist_search_iter(user_text: String, vec_appinfo: Vec<APPINFO>, lb: Lis
        })
        .collect();
    app_list_iter.sort_by_key(|&(pos, _)| pos);
-
-   /*
-   if some_ent.is_some() {
-           for i in keys {
-               let item = i.to_owned();
-               let lbl = Label::new(Some(&item)); 
-               let lbr = ListBoxRow::new();
-               lbr.set_child(Some(&lbl));
-               lb.prepend(&lbr);
-           }
-   }*/
 
    lb.select_row(lb.row_at_index(0).as_ref());
 

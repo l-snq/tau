@@ -112,7 +112,7 @@ pub fn draw_ui(application: &Application) {
            .to_string()
            .to_lowercase();
        sanitize_app_names(app_names_vec.clone());
-       applist_search_iter(user_text.clone(), app_list_vec.clone(), list_box, entry).expect("something went wrong when trying to match results");
+       applist_search_iter(user_text.clone(), app_list_vec.clone(), list_box).expect("something went wrong when trying to match results");
     }));
 
     entry.connect_activate(clone!(@weak list_box, @strong apps_rc, @strong matcher => move |entry| {
