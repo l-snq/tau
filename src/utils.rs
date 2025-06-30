@@ -1,4 +1,4 @@
-use gtk4::{gio, prelude::ListBoxRowExt, Label, SearchEntry, ListBox, ListBoxRow};
+use gtk4::{gio, prelude::ListBoxRowExt, Label, ListBox, ListBoxRow};
 use std::process::Command;
 
 #[derive(Debug, Clone)]
