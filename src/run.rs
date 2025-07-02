@@ -5,9 +5,20 @@ use crate::{
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use gtk4::{
-    gio, glib::clone, prelude::*, Application, ApplicationWindow, IconTheme, SearchBar, SearchEntry, TextDirection, Image, IconLookupFlags};
+    gdk::Display, glib::clone, prelude::*, style_context_add_provider_for_display, STYLE_PROVIDER_PRIORITY_APPLICATION, Application, ApplicationWindow, CssProvider, IconLookupFlags, IconTheme, Image, SearchBar, SearchEntry, TextDirection};
 use gtk4_layer_shell::{KeyboardMode, Layer, LayerShell};
 use std::rc::Rc;
+
+pub fn load_css() {
+    let provider = CssProvider::new();
+    provider.load_from_string(include_str!("style.css"));
+
+    style_context_add_provider_for_display(
+        &Display::default().expect("Could not connect to display"),
+        &provider,
+        STYLE_PROVIDER_PRIORITY_APPLICATION,
+    );
+}
 
 pub fn draw_ui(application: &Application) {
     let draw_window = ApplicationWindow::builder()
@@ -40,12 +51,19 @@ pub fn draw_ui(application: &Application) {
         .valign(gtk4::Align::Start)
         .show_close_button(true)
         .build();
+    bar.add_css_class("barContainer");
     let entry = SearchEntry::new();
     entry.set_hexpand(true);
     entry.set_widget_name("entry");
     entry.set_placeholder_text(Some("Start typing something..."));
     entry.set_key_capture_widget(Some(&list_box));
 
+    // set the css styling for bar first.
+    // In hiearchy from root to child It goes like: 
+    // bar
+    // entry
+    // listbox
+    // list row
     bar.connect_entry(&entry);
     bar.set_search_mode(true);
     bar.set_key_capture_widget(Some(&entry));
