@@ -91,6 +91,7 @@ pub fn draw_ui(application: &Application) {
 
         // rendering out all the results in appInfo
         let lbr = gtk4::ListBoxRow::new();
+        lbr.add_css_class("list_box_rows");
         lbr.set_widget_name(&app_name);
         let lbr_label = gtk4::Label::new(Some(&app_name));
         lbr.set_child(Some(&lbr_label));
