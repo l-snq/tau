@@ -1,6 +1,12 @@
 * {
 	background-color: black;
-	color: white;
 	font-size: 3rem;
-	width: 500px;
+}
+
+.entrybar {
+	color: white;
+}
+
+.list_box_rows {
+	color: white;
 }

@@ -37,6 +37,7 @@ pub fn draw_ui(application: &Application) {
     let list_box = gtk4::ListBox::new();
     list_box.invalidate_sort();
     list_box.invalidate_filter();
+    list_box.add_css_class("container");
     let scrolled_window = gtk4::ScrolledWindow::builder()
         .name("scrollable window")
         .hscrollbar_policy(gtk4::PolicyType::Never)
@@ -54,6 +55,7 @@ pub fn draw_ui(application: &Application) {
     bar.add_css_class("barContainer");
     let entry = SearchEntry::new();
     entry.set_hexpand(true);
+    entry.add_css_class("entrybar");
     entry.set_widget_name("entry");
     entry.set_placeholder_text(Some("Start typing something..."));
     entry.set_key_capture_widget(Some(&list_box));
