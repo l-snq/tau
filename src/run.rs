@@ -54,7 +54,8 @@ pub fn draw_ui(application: &Application) {
         .build();
     bar.add_css_class("barContainer");
     let entry = SearchEntry::new();
-    entry.set_hexpand(true);
+    entry.set_hexpand(false);
+    entry.set_vexpand(false);
     entry.add_css_class("entrybar");
     entry.set_widget_name("entry");
     entry.set_placeholder_text(Some("Start typing something..."));
